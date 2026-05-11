@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: DoAnCDIO3
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/doancdio3
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+logging:
+  file:
+    name: logs/app.log
