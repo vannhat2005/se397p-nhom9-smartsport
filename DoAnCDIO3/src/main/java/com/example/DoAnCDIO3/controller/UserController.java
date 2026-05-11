@@ -2,6 +2,7 @@ package com.example.DoAnCDIO3.controller;
 
 import com.example.DoAnCDIO3.dto.ApiResponse;
 import com.example.DoAnCDIO3.dto.PageResponse;
+import com.example.DoAnCDIO3.dto.request.UserCreateByAdminRequest;
 import com.example.DoAnCDIO3.dto.request.UserCreateRequest;
 import com.example.DoAnCDIO3.dto.response.UserResponse;
 import com.example.DoAnCDIO3.dto.update.UserUpdateRequest;
@@ -70,6 +71,35 @@ public class UserController {
         return ApiResponse.<Void>builder()
                 .message("Đã xóa người dùng thành công")
                 // Không truyền data thì JsonInclude.NON_NULL sẽ tự động ẩn field data đi
+                .build();
+    }
+
+    /**
+     * 6. Admin tạo tài khoản mới và cấp quyền chỉ định (Ví dụ: OWNER, ADMIN)
+     */
+    @PostMapping("/admin/create")
+    // @PreAuthorize("hasAuthority('ADMIN')") // Mở khóa dòng này khi cài Spring Security
+    public ApiResponse<UserResponse> createUserByAdmin(
+            @RequestBody @Valid UserCreateByAdminRequest request
+    ) {
+        return ApiResponse.<UserResponse>builder()
+                .message("Admin đã tạo tài khoản thành công.")
+                .data(userService.createUserByAdmin(request))
+                .build();
+    }
+
+    /**
+     * 7. Admin cập nhật lại quyền (Role) cho một User đang có trong hệ thống
+     */
+    @PutMapping("/admin/{userId}/role")
+    // @PreAuthorize("hasAuthority('ADMIN')") // Mở khóa dòng này khi cài Spring Security
+    public ApiResponse<UserResponse> updateRole(
+            @PathVariable Integer userId,
+            @RequestParam String roleName
+    ) {
+        return ApiResponse.<UserResponse>builder()
+                .message("Cập nhật quyền (Role) cho người dùng thành công.")
+                .data(userService.updateRole(userId, roleName))
                 .build();
     }
 }

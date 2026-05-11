@@ -11,11 +11,19 @@ import com.example.DoAnCDIO3.mapper.FieldPriceMapper;
 import com.example.DoAnCDIO3.repository.FieldPriceRepository;
 import com.example.DoAnCDIO3.repository.FieldRepository;
 import com.example.DoAnCDIO3.service.FieldPriceService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
+@Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@RequiredArgsConstructor
 public class FieldPriceServiceImpl implements FieldPriceService {
     FieldPriceRepository fieldPriceRepository;
     FieldRepository fieldRepository;
@@ -54,7 +62,7 @@ public class FieldPriceServiceImpl implements FieldPriceService {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
 
         // 3. Query Database
-        Page<FieldPrice> fieldPricePage = fieldPriceRepository.findByField_id_Id(fieldId, pageRequest);
+        Page<FieldPrice> fieldPricePage = fieldPriceRepository.getPricesByFieldId(fieldId, pageRequest);
 
         // 4. Map List Entity sang List Response DTO bằng Stream API và Mapper
         List<FieldPriceResponse> responseList = fieldPricePage.getContent().stream()

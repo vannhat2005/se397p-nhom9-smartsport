@@ -2,6 +2,8 @@ package com.example.DoAnCDIO3.repository;
 
 import com.example.DoAnCDIO3.entity.Booking;
 import com.example.DoAnCDIO3.entity.Role;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +25,12 @@ public interface BookingRepository extends JpaRepository<Booking,Integer> {
             @Param("startTime") LocalTime startTime,
             @Param("endTime") LocalTime endTime
     );
+
+    // 2. LẤY DANH SÁCH ĐẶT SÂN CHO CHỦ SÂN (Lọc theo user_id trong bảng Field)
+    @Query("SELECT b FROM Booking b WHERE b.field_id.user_id.id = :ownerId ORDER BY b.created_at DESC")
+    Page<Booking> findBookingsByOwnerId(@Param("ownerId") Integer ownerId, Pageable pageable);
+
+    // 3. LẤY DANH SÁCH ĐẶT SÂN CHO KHÁCH HÀNG (Lọc theo user_id trong bảng Booking)
+    @Query("SELECT b FROM Booking b WHERE b.user_id.id = :customerId ORDER BY b.created_at DESC")
+    Page<Booking> findBookingsByCustomerId(@Param("customerId") Integer customerId, Pageable pageable);
 }

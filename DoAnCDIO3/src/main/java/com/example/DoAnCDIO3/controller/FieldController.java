@@ -86,4 +86,17 @@ public class FieldController {
                 .message("Đã xóa sân bóng thành công")
                 .build();
     }
+
+    // API dành cho Admin duyệt/từ chối sân
+    @PutMapping("/admin/{id}/approve")
+    public ApiResponse<FieldResponse> approveOrRejectField(
+            @PathVariable Integer id,
+            @RequestParam boolean isApproved
+    ) {
+        String message = isApproved ? "Đã duyệt sân thành công." : "Đã từ chối sân.";
+        return ApiResponse.<FieldResponse>builder()
+                .message(message)
+                .data(fieldService.approveOrRejectField(id, isApproved))
+                .build();
+    }
 }

@@ -14,11 +14,12 @@ import java.util.Optional;
 
 @Repository
 public interface FieldPriceRepository extends JpaRepository<FieldPrice,Integer> {
-    Page<FieldPrice> findByField_id_Id(Integer fieldId, Pageable pageable);
+    @Query("SELECT fp FROM FieldPrice fp WHERE fp.field_id.id = :fieldId")
+    Page<FieldPrice> getPricesByFieldId(Integer fieldId, Pageable pageable);
 
     @Query("SELECT fp FROM FieldPrice fp WHERE fp.field_id.id = :fieldId " +
             "AND fp.day_type = :dayType " +
-            "AND fp.status = 1 " + // Chỉ lấy giá đang Active
+            "AND fp.status = 1 " +
             "AND fp.start_time <= :time AND fp.end_time > :time")
     Optional<FieldPrice> findPriceForBooking(
             @Param("fieldId") Integer fieldId,
