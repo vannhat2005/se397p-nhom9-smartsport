@@ -1,0 +1,41 @@
+validation:
+  user:
+    role_not_null: "Vui lòng chọn vai trò (Role)."
+    fullname_not_blank: "Họ tên không được để trống."
+    email_not_blank: "Email không được để trống."
+    email_invalid: "Định dạng email không hợp lệ."
+    phone_invalid: "Số điện thoại phải gồm 10 chữ số."
+    password_not_blank: "Mật khẩu không được để trống."
+    password_length: "Mật khẩu phải có ít nhất 6 ký tự."
+
+  field:
+    type_not_null: "Vui lòng chọn loại sân."
+    name_not_blank: "Tên sân không được để trống."
+    address_not_blank: "Địa chỉ sân không được để trống."
+    time_not_null: "Thời gian mở/đóng cửa không được để trống."
+
+  booking:
+    field_not_null: "Mã sân không được để trống."
+    date_not_null: "Ngày đặt sân không được để trống."
+    date_past: "Ngày đặt sân phải từ hôm nay trở đi."
+    time_not_null: "Giờ bắt đầu và kết thúc không được để trống."
+
+  field_price:
+    field_not_null: "Mã sân không được để trống."
+    day_type_not_null: "Loại ngày (thường/cuối tuần) không được để trống."
+    price_not_null: "Giá tiền không được để trống."
+    price_min: "Giá tiền phải lớn hơn 0."
+
+    field_type:
+      name_not_blank: "Tên loại sân không được để trống."
+
+    payment:
+      booking_not_null: "Mã đặt sân không được để trống."
+      bank_not_blank: "Tên ngân hàng không được để trống."
+      account_not_blank: "Tên chủ tài khoản không được để trống."
+
+    bank_account:
+      owner_not_null: "Mã chủ sân không được để trống."
+      bank_not_blank: "Tên ngân hàng không được để trống."
+      number_not_blank: "Số tài khoản không được để trống."
+      holder_not_blank: "Tên người thụ hưởng không được để trống."
