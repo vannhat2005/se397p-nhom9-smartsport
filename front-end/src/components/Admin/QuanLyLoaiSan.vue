@@ -19,7 +19,7 @@
                     </div>
                 </div>
 
-                <h3>{{ fieldTypes.length }}</h3>
+                <h3>{{ totalElements }}</h3>
 
                 <p class="trend green-text">
                     <span class="material-symbols-outlined">trending_up</span>
@@ -115,7 +115,7 @@
 
                     <tbody>
                         <tr v-for="type in displayedFieldTypes" :key="type.id">
-                            <td class="type-code">{{ type.code }}</td>
+                            <td class="type-code">{{ type.id }}</td>
 
                             <td>
                                 <div class="type-cell">
@@ -127,8 +127,8 @@
                             </td>
 
                             <td>
-                                <span class="status-badge" :class="type.status === 1 ? 'active' : 'maintenance'">
-                                    {{ type.status === 1 ? "HOẠT ĐỘNG" : "BẢO TRÌ" }}
+                                <span class="status-badge" :class="getStatusClass(type.status)">
+                                    {{ getStatusText(type.status) }}
                                 </span>
                             </td>
 
@@ -147,9 +147,9 @@
             <div class="table-footer">
                 <div>
                     Hiển thị
-                    <span>{{ startIndex + 1 }} - {{ endIndex }}</span>
+                    <span>{{ totalElements === 0 ? 0 : startIndex + 1 }} - {{ endIndex }}</span>
                     trên
-                    <span>{{ fieldTypes.length }}</span>
+                    <span>{{ totalElements }}</span>
                     kết quả
                 </div>
 
@@ -173,117 +173,38 @@
 </template>
 
 <script>
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default {
     name: "QuanLyLoaiSan",
 
     data() {
         return {
+            // Trang hiện tại đang xem
             currentPage: 1,
-            perPage: 4,
 
-            fieldTypes: [
-                {
-                    id: 1,
-                    code: "#FT-001",
-                    name: "Bóng đá 7 người",
-                    description: "Cỏ nhân tạo chuẩn FIFA",
-                    status: 1,
-                },
-                {
-                    id: 2,
-                    code: "#BT-002",
-                    name: "Cầu lông",
-                    description: "Thảm chuyên dụng Victor",
-                    status: 1,
-                },
-                {
-                    id: 3,
-                    code: "#TN-003",
-                    name: "Tennis",
-                    description: "Sân cứng tiêu chuẩn Úc",
-                    status: 0,
-                },
-                {
-                    id: 4,
-                    code: "#PB-004",
-                    name: "Pickleball",
-                    description: "Xu hướng thể thao mới",
-                    status: 1,
-                },
-                {
-                    id: 5,
-                    code: "#BB-005",
-                    name: "Bóng rổ",
-                    description: "Sân bóng rổ ngoài trời",
-                    status: 1,
-                },
-                {
-                    id: 6,
-                    code: "#VB-006",
-                    name: "Bóng chuyền",
-                    description: "Sân bóng chuyền tiêu chuẩn",
-                    status: 1,
-                },
-                {
-                    id: 7,
-                    code: "#FT-007",
-                    name: "Bóng đá 5 người",
-                    description: "Sân mini cỏ nhân tạo",
-                    status: 1,
-                },
-                {
-                    id: 8,
-                    code: "#BD-008",
-                    name: "Cầu lông đôi",
-                    description: "Sân trong nhà ánh sáng tốt",
-                    status: 1,
-                },
-                {
-                    id: 9,
-                    code: "#FS-009",
-                    name: "Futsal",
-                    description: "Sân trong nhà tiêu chuẩn",
-                    status: 1,
-                },
-                {
-                    id: 10,
-                    code: "#GY-010",
-                    name: "Gym",
-                    description: "Không gian tập luyện đa năng",
-                    status: 0,
-                },
-                {
-                    id: 11,
-                    code: "#SW-011",
-                    name: "Bơi lội",
-                    description: "Hồ bơi tiêu chuẩn",
-                    status: 1,
-                },
-                {
-                    id: 12,
-                    code: "#TT-012",
-                    name: "Bóng bàn",
-                    description: "Bàn thi đấu trong nhà",
-                    status: 1,
-                },
-            ],
+            // Số loại sân mỗi trang
+            pageSize: 4,
+
+            // Tổng số trang backend trả về
+            totalPages: 1,
+
+            // Tổng số loại sân trong database
+            totalElements: 0,
+
+            // Danh sách loại sân của trang hiện tại
+            fieldTypes: [],
         };
     },
 
     computed: {
-        totalPages() {
-            return Math.ceil(this.fieldTypes.length / this.perPage);
-        },
-
         startIndex() {
-            return (this.currentPage - 1) * this.perPage;
+            return (this.currentPage - 1) * this.pageSize;
         },
 
         displayedFieldTypes() {
-            const start = this.startIndex;
-            const end = start + this.perPage;
-
-            return this.fieldTypes.slice(start, end);
+            return this.fieldTypes;
         },
 
         endIndex() {
@@ -295,26 +216,90 @@ export default {
         },
 
         activePercent() {
+            if (this.fieldTypes.length === 0) {
+                return 0;
+            }
+
             return Math.round((this.activeCount / this.fieldTypes.length) * 100);
         },
     },
+    mounted() {
+        this.loadFieldTypes();
+    },
 
     methods: {
+        // Hàm gọi API để lấy danh sách loại sân
+        loadFieldTypes() {
+            axios
+                .get(`${API_BASE_URL}/api/field-types`, {
+                    params: {
+                        // Gửi page lên backend
+                        page: this.currentPage,
+
+                        // Gửi size lên backend
+                        size: this.pageSize,
+                    },
+                })
+                .then((response) => {
+                    const pageData = response.data.data;
+
+                    // Danh sách loại sân
+                    this.fieldTypes = pageData.data;
+
+                    // Trang hiện tại
+                    this.currentPage = pageData.currentPage;
+
+                    // Số dòng mỗi trang
+                    this.pageSize = pageData.pageSize;
+
+                    // Tổng số trang
+                    this.totalPages = pageData.totalPages;
+
+                    // Tổng số loại sân trong database
+                    this.totalElements = pageData.totalElements;
+                })
+                .catch((error) => {
+                    console.error("Lỗi khi tải loại sân:", error);
+                    alert("Không thể tải danh sách loại sân. Vui lòng thử lại sau.");
+                });
+        },
+        //Chuyển sang trang được chọn
         goToPage(page) {
             if (page < 1 || page > this.totalPages) {
                 return;
             }
 
             this.currentPage = page;
+            this.loadFieldTypes();
         },
-
+        // Quay về trang trước
         prevPage() {
             this.goToPage(this.currentPage - 1);
         },
-
+        // Chuyển sang trang tiếp theo
         nextPage() {
             this.goToPage(this.currentPage + 1);
         },
+
+        // Hiển thị chữ trạng thái
+        getStatusText(status) {
+            if (status === 1) {
+                return "HOẠT ĐỘNG";
+            }
+
+            return "BẢO TRÌ";
+        },
+
+        // Hiển thị class CSS theo trạng thái
+        getStatusClass(status) {
+            if (status === 1) {
+                return "active";
+            }
+
+            return "maintenance";
+        },
+
+
 
         editFieldType(type) {
             console.log("Sửa loại sân:", type);
