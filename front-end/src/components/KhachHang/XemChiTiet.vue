@@ -33,11 +33,7 @@
               </div>
 
               <div class="price-list">
-                <div
-                  v-for="price in fieldPrices"
-                  :key="price.id"
-                  class="price-item"
-                >
+                <div v-for="price in fieldPrices" :key="price.id" class="price-item">
                   <span>{{ price.startTime }} - {{ price.endTime }}:</span>
                   <strong>{{ formatCurrency(price.price) }}</strong>
                 </div>
@@ -91,22 +87,15 @@
           </div>
 
           <div class="time-grid">
-            <button
-              v-for="slot in fieldSchedules"
-              :key="slot.id"
-              class="time-slot"
-              :class="{
-                selected: isSelected(slot),
-                available: slot.status === 1,
-                booked: slot.status === 2,
-                locked: slot.status === 0,
-              }"
-              :disabled="slot.status !== 1"
-              @click="toggleSlot(slot)"
-            >
+            <button v-for="slot in fieldSchedules" :key="slot.id" class="time-slot" :class="{
+              selected: isSelected(slot),
+              available: slot.status === 1,
+              booked: slot.status === 2,
+              locked: slot.status === 0,
+            }" :disabled="slot.status !== 1" @click="toggleSlot(slot)">
               <div class="time-row">
                 <span>{{ slot.startTime }}</span>
-                <small>{{ slot.status === 0 ? "-" : slot.priceText }}</small>
+                <small>{{ slot.status === 0 ? '-' : slot.priceText }}</small>
               </div>
 
               <strong>
@@ -135,11 +124,7 @@
                 Chưa chọn khung giờ nào
               </div>
 
-              <div
-                v-for="slot in selectedSlots"
-                :key="slot.id"
-                class="selected-item"
-              >
+              <div v-for="slot in selectedSlots" :key="slot.id" class="selected-item">
                 <div class="selected-left">
                   <span class="material-symbols-outlined">timer</span>
 
@@ -184,7 +169,6 @@
             Hủy sân miễn phí trước 24 giờ kể từ thời điểm bắt đầu.
           </p>
         </div>
-
       </aside>
     </div>
   </div>
@@ -196,6 +180,8 @@ export default {
 
   data() {
     return {
+      bookingDate: "2026-05-06",
+
       field: {
         id: 1,
         userId: 2,
@@ -248,192 +234,60 @@ export default {
         },
       ],
 
-      fieldSchedules: [
+      /*
+        Đây mới là dữ liệu đúng của bảng field_schedules trong database.
+
+        Chỉ lưu những khung giờ đã phát sinh dữ liệu:
+        - status = 1: Đã đặt
+        - status = 2: Đang giữ chỗ
+
+        Không lưu các giờ trống.
+        Frontend sẽ tự sinh giờ trống từ field.openTime đến field.closeTime.
+      */
+      fieldScheduleDatabases: [
         {
           id: 1,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "06:00",
-          endTime: "07:00",
-          price: 120000,
-          priceText: "120k",
-          status: 1,
-        },
-        {
-          id: 2,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "07:00",
-          endTime: "08:00",
-          price: 120000,
-          priceText: "120k",
-          status: 1,
-        },
-        {
-          id: 3,
           fieldId: 1,
           bookingId: 15,
           scheduleDate: "2026-05-06",
           startTime: "08:00",
           endTime: "09:00",
-          price: 120000,
-          priceText: "120k",
+          status: 1,
+        },
+        {
+          id: 2,
+          fieldId: 1,
+          bookingId: 16,
+          scheduleDate: "2026-05-06",
+          startTime: "12:00",
+          endTime: "13:00",
           status: 2,
+        },
+        {
+          id: 3,
+          fieldId: 1,
+          bookingId: 17,
+          scheduleDate: "2026-05-06",
+          startTime: "15:00",
+          endTime: "16:00",
+          status: 1,
         },
         {
           id: 4,
           fieldId: 1,
-          bookingId: null,
+          bookingId: 18,
           scheduleDate: "2026-05-06",
-          startTime: "09:00",
-          endTime: "10:00",
-          price: 120000,
-          priceText: "120k",
-          status: 1,
+          startTime: "17:00",
+          endTime: "18:00",
+          status: 2,
         },
         {
           id: 5,
           fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "10:00",
-          endTime: "11:00",
-          price: 120000,
-          priceText: "120k",
-          status: 1,
-        },
-        {
-          id: 6,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "11:00",
-          endTime: "12:00",
-          price: 120000,
-          priceText: "120k",
-          status: 1,
-        },
-        {
-          id: 7,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "12:00",
-          endTime: "13:00",
-          price: 150000,
-          priceText: "150k",
-          status: 0,
-        },
-        {
-          id: 8,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "13:00",
-          endTime: "14:00",
-          price: 150000,
-          priceText: "150k",
-          status: 1,
-        },
-        {
-          id: 9,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "14:00",
-          endTime: "15:00",
-          price: 150000,
-          priceText: "150k",
-          status: 1,
-        },
-        {
-          id: 10,
-          fieldId: 1,
-          bookingId: 16,
-          scheduleDate: "2026-05-06",
-          startTime: "15:00",
-          endTime: "16:00",
-          price: 150000,
-          priceText: "150k",
-          status: 2,
-        },
-        {
-          id: 11,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "16:00",
-          endTime: "17:00",
-          price: 150000,
-          priceText: "150k",
-          status: 1,
-        },
-        {
-          id: 12,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "17:00",
-          endTime: "18:00",
-          price: 150000,
-          priceText: "150k",
-          status: 0,
-        },
-        {
-          id: 13,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "18:00",
-          endTime: "19:00",
-          price: 180000,
-          priceText: "180k",
-          status: 1,
-        },
-        {
-          id: 14,
-          fieldId: 1,
-          bookingId: 17,
+          bookingId: 19,
           scheduleDate: "2026-05-06",
           startTime: "19:00",
           endTime: "20:00",
-          price: 180000,
-          priceText: "180k",
-          status: 2,
-        },
-        {
-          id: 15,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "20:00",
-          endTime: "21:00",
-          price: 180000,
-          priceText: "180k",
-          status: 1,
-        },
-        {
-          id: 16,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "21:00",
-          endTime: "22:00",
-          price: 180000,
-          priceText: "180k",
-          status: 1,
-        },
-        {
-          id: 17,
-          fieldId: 1,
-          bookingId: null,
-          scheduleDate: "2026-05-06",
-          startTime: "22:00",
-          endTime: "23:00",
-          price: 180000,
-          priceText: "180k",
           status: 1,
         },
       ],
@@ -443,6 +297,57 @@ export default {
   },
 
   computed: {
+    /*
+      fieldSchedules dùng cho giao diện cũ.
+
+      Quy đổi để KHÔNG đổi giao diện:
+      - Không có trong DB => status = 1 => Trống
+      - DB status = 1 => UI status = 2 => Đã đặt
+      - DB status = 2 => UI status = 0 => Khóa
+    */
+    fieldSchedules() {
+      const slots = [];
+      const openMinutes = this.timeToMinutes(this.field.openTime);
+      const closeMinutes = this.timeToMinutes(this.field.closeTime);
+
+      let slotId = 1;
+
+      for (let time = openMinutes; time < closeMinutes; time += 60) {
+        const startTime = this.minutesToTime(time);
+        const endTime = this.minutesToTime(time + 60);
+
+        const databaseSchedule = this.findDatabaseSchedule(startTime, endTime);
+        const price = this.getPriceByTime(startTime, endTime);
+
+        let uiStatus = 1;
+
+        if (databaseSchedule && databaseSchedule.status === 1) {
+          uiStatus = 2;
+        }
+
+        if (databaseSchedule && databaseSchedule.status === 2) {
+          uiStatus = 0;
+        }
+
+        slots.push({
+          id: slotId,
+          fieldId: this.field.id,
+          bookingId: databaseSchedule ? databaseSchedule.bookingId : null,
+          scheduleDate: this.bookingDate,
+          startTime,
+          endTime,
+          price,
+          priceText: this.formatShortPrice(price),
+          status: uiStatus,
+          databaseStatus: databaseSchedule ? databaseSchedule.status : null,
+        });
+
+        slotId++;
+      }
+
+      return slots;
+    },
+
     selectedSlots() {
       return this.fieldSchedules.filter((slot) =>
         this.selectedSlotIds.includes(slot.id)
@@ -450,7 +355,8 @@ export default {
     },
 
     bookingDateText() {
-      return "06/05/2026";
+      const [year, month, day] = this.bookingDate.split("-");
+      return `${day}/${month}/${year}`;
     },
 
     totalHours() {
@@ -471,8 +377,80 @@ export default {
   },
 
   methods: {
+    timeToMinutes(time) {
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    },
+
+    minutesToTime(totalMinutes) {
+      const hour = Math.floor(totalMinutes / 60);
+      const minute = totalMinutes % 60;
+
+      return `${String(hour).padStart(2, "0")}:${String(minute).padStart(
+        2,
+        "0"
+      )}`;
+    },
+
+    isTimeOverlap(startA, endA, startB, endB) {
+      const aStart = this.timeToMinutes(startA);
+      const aEnd = this.timeToMinutes(endA);
+      const bStart = this.timeToMinutes(startB);
+      const bEnd = this.timeToMinutes(endB);
+
+      return aStart < bEnd && aEnd > bStart;
+    },
+
+    findDatabaseSchedule(startTime, endTime) {
+      return this.fieldScheduleDatabases.find((schedule) => {
+        if (schedule.fieldId !== this.field.id) {
+          return false;
+        }
+
+        if (schedule.scheduleDate !== this.bookingDate) {
+          return false;
+        }
+
+        return this.isTimeOverlap(
+          startTime,
+          endTime,
+          schedule.startTime,
+          schedule.endTime
+        );
+      });
+    },
+
+    getPriceByTime(startTime, endTime) {
+      const priceRule = this.fieldPrices.find((price) => {
+        if (price.fieldId !== this.field.id) {
+          return false;
+        }
+
+        if (price.status !== 1) {
+          return false;
+        }
+
+        const slotStart = this.timeToMinutes(startTime);
+        const slotEnd = this.timeToMinutes(endTime);
+        const priceStart = this.timeToMinutes(price.startTime);
+        const priceEnd = this.timeToMinutes(price.endTime);
+
+        return slotStart >= priceStart && slotEnd <= priceEnd;
+      });
+
+      return priceRule ? priceRule.price : 0;
+    },
+
     formatCurrency(value) {
       return new Intl.NumberFormat("vi-VN").format(value) + "đ";
+    },
+
+    formatShortPrice(value) {
+      if (!value) {
+        return "-";
+      }
+
+      return `${Math.round(value / 1000)}k`;
     },
 
     isSelected(slot) {
@@ -522,15 +500,31 @@ export default {
     },
 
     handleBooking() {
+      if (this.selectedSlots.length === 0) {
+        alert("Vui lòng chọn ít nhất một khung giờ.");
+        return;
+      }
+
       const bookingPayload = {
         field_id: this.field.id,
-        booking_date: this.fieldSchedules[0]?.scheduleDate,
+        booking_date: this.bookingDate,
+
+        /*
+          Khi khách bấm đặt:
+          - bookings.status = 0: Chờ xác nhận
+          - field_schedules.status = 2: Đang giữ chỗ
+
+          Giao diện cũ sẽ quy đổi field_schedules.status = 2 thành slot Khóa.
+        */
+        booking_status: 0,
+        field_schedule_status: 2,
+
         selected_schedules: this.selectedSlots.map((slot) => ({
-          schedule_id: slot.id,
           start_time: slot.startTime,
           end_time: slot.endTime,
           price: slot.price,
         })),
+
         total_amount: this.totalAmount,
       };
 

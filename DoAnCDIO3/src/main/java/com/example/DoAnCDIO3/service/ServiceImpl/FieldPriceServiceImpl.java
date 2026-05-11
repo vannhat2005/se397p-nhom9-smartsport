@@ -54,7 +54,7 @@ public class FieldPriceServiceImpl implements FieldPriceService {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
 
         // 3. Query Database
-        Page<FieldPrice> fieldPricePage = fieldPriceRepository.findByField_id_Id(fieldId, pageRequest);
+        Page<FieldPrice> fieldPricePage = fieldPriceRepository.getPricesByFieldId(fieldId, pageRequest);
 
         // 4. Map List Entity sang List Response DTO bằng Stream API và Mapper
         List<FieldPriceResponse> responseList = fieldPricePage.getContent().stream()
