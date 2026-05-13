@@ -29,5 +29,5 @@ public class UserCreateByAdminRequest {
 
     String address;
 
-    String roleName;
+    String role_name;
 }

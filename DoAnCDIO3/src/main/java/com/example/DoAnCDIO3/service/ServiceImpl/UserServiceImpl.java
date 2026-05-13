@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toUserFromAdminRequest(request);
 
         // 3. Tìm Role theo tên mà Admin truyền vào (ví dụ: "OWNER", "ADMIN")
-        Role role = roleRepository.findByName(request.getRoleName())
+        Role role = roleRepository.findByName(request.getRole_name())
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
         // 4. Set các giá trị mặc định và Role

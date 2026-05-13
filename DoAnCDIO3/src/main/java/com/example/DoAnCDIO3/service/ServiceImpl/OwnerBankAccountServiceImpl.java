@@ -3,6 +3,7 @@ package com.example.DoAnCDIO3.service.ServiceImpl;
 import com.example.DoAnCDIO3.dto.request.OwnerBankAccountRequest;
 import com.example.DoAnCDIO3.dto.response.OwnerBankAccountResponse;
 import com.example.DoAnCDIO3.entity.OwnerBankAccount;
+import com.example.DoAnCDIO3.entity.User;
 import com.example.DoAnCDIO3.exception.AppException;
 import com.example.DoAnCDIO3.exception.ErrorCode;
 import com.example.DoAnCDIO3.mapper.OwnerBankAccountMapper;
@@ -25,7 +26,32 @@ public class OwnerBankAccountServiceImpl implements OwnerBankAccountService {
     OwnerBankAccountMapper bankAccountMapper;
     @Override
     public OwnerBankAccountResponse createBankAccount(OwnerBankAccountRequest request) {
-        return null;
+        // Nếu bạn đặt là userId thì dùng getUserId()
+        Integer ownerId = request.getUser_id();
+
+        // 2. Tìm xem User (chủ sân) này có tồn tại trong bảng users không
+        User user = userRepository.findById(ownerId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // 3. Kiểm tra xem chủ sân này đã khai báo tài khoản ngân hàng chưa (Mỗi người 1 tài khoản)
+        // Lưu ý: Hàm existsByUser_Id này chúng ta đã viết bằng @Query ở bước trước
+        if (bankAccountRepository.existsByUser_Id(ownerId)) {
+            // Nếu bạn chưa có mã lỗi này trong ErrorCode, hãy vào đó thêm vào nhé!
+            // Ví dụ: BANK_ACCOUNT_EXISTED(400, "Chủ sân này đã có tài khoản ngân hàng!")
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+
+        // 4. Map từ DTO sang Entity
+        OwnerBankAccount bankAccount = bankAccountMapper.toEntity(request);
+
+        // 5. Gắn đối tượng User vào tài khoản ngân hàng
+        bankAccount.setUser_id(user);
+
+        // 6. Lưu vào cơ sở dữ liệu
+        OwnerBankAccount savedAccount = bankAccountRepository.save(bankAccount);
+
+        // 7. Trả về kết quả
+        return bankAccountMapper.toResponse(savedAccount);
     }
 
     @Override
