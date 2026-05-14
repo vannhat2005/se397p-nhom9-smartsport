@@ -14,6 +14,9 @@ public interface FieldService {
     // 2. Dành cho Admin: Lấy danh sách sân đang chờ duyệt (PENDING)
     PageResponse<FieldResponse> getAllPendingFields(int page, int size);
 
+    // 3. Dành cho Admin: Duyệt (ACTIVE) hoặc Từ chối (REJECTED/INACTIVE) sân bóng
+    FieldResponse approveOrRejectField(Integer id, boolean isApproved);
+
     // Xem chi tiết một sân theo ID
     FieldResponse getFieldById(Integer id);
 

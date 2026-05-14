@@ -1,6 +1,7 @@
 package com.example.DoAnCDIO3.service.ServiceImpl;
 
 import com.example.DoAnCDIO3.dto.PageResponse;
+import com.example.DoAnCDIO3.dto.request.UserCreateByAdminRequest;
 import com.example.DoAnCDIO3.dto.request.UserCreateRequest;
 import com.example.DoAnCDIO3.dto.response.UserResponse;
 import com.example.DoAnCDIO3.dto.update.UserUpdateRequest;
@@ -58,6 +59,33 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(savedUser);
     }
 
+    @Override
+    public UserResponse createUserByAdmin(UserCreateByAdminRequest request) {
+        // 1. Kiểm tra email trùng
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+
+        // 2. Dùng Mapper chuyển DTO sang Entity
+        User user = userMapper.toUserFromAdminRequest(request);
+
+        // 3. Tìm Role theo tên mà Admin truyền vào (ví dụ: "OWNER", "ADMIN")
+        Role role = roleRepository.findByName(request.getRole_name())
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+
+        // 4. Set các giá trị mặc định và Role
+        user.setRole_id(role); // Lưu ý: Nếu sau này bạn đổi tên biến thành "role" chuẩn OOP thì nhớ sửa lại nhé
+        user.setStatus(UserStatusEnum.ACTIVE.getValue());
+        user.setCreated_at(LocalDateTime.now());
+
+        // Tạm thời để trống pass (chưa có Security)
+        user.setPassword("");
+
+        // 5. Lưu vào DB và trả về
+        User savedUser = userRepository.save(user);
+        return userMapper.toUserResponse(savedUser);
+    }
+
     // 2. LẤY TẤT CẢ (GET ALL)
     public PageResponse<UserResponse> getAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -109,6 +137,25 @@ public class UserServiceImpl implements UserService {
         user.setStatus(UserStatusEnum.INACTIVE.getValue());
         user.setUpdated_at(LocalDateTime.now());
         userRepository.save(user);
+    }
+
+    @Override
+    public UserResponse updateRole(Integer userId, String roleName) {
+        // 1. Tìm user theo ID+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // 2. Tìm Role mới theo tên (VD: "ADMIN", "OWNER", "USER")
+        Role newRole = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+
+        // 3. Cập nhật Role và thời gian
+        user.setRole_id(newRole);
+        user.setUpdated_at(LocalDateTime.now());
+
+        // 4. Lưu vào DB và trả về
+        User savedUser = userRepository.save(user);
+        return userMapper.toUserResponse(savedUser);
     }
 
 
