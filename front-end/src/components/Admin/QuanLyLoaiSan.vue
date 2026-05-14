@@ -6,6 +6,10 @@
                 <h2>Quản lý loại sân</h2>
                 <p>Quản lý và cấu hình các loại hình thể thao trong hệ thống.</p>
             </div>
+            <button class="add-button" @click="addFieldType">
+                <span class="material-symbols-outlined">add</span>
+                Thêm loại sân
+            </button>
         </div>
 
         <!-- Dashboard Stats Preview -->
@@ -81,24 +85,7 @@
         <div class="table-card">
             <div class="table-header">
                 <div class="table-title">
-                    <span>Danh sách phân loại</span>
-
-                    <div class="divider"></div>
-
-                    <div class="filter-label">
-                        <span class="material-symbols-outlined">filter_list</span>
-                        Bộ lọc
-                    </div>
-                </div>
-
-                <div class="table-actions">
-                    <button>
-                        <span class="material-symbols-outlined">download</span>
-                    </button>
-
-                    <button>
-                        <span class="material-symbols-outlined">more_vert</span>
-                    </button>
+                    <span>Danh sách phân loại</span>                 
                 </div>
             </div>
 
@@ -287,7 +274,7 @@ export default {
                 return "HOẠT ĐỘNG";
             }
 
-            return "BẢO TRÌ";
+            return "NGỪNG HOẠT ĐỘNG";
         },
 
         // Hiển thị class CSS theo trạng thái
@@ -298,8 +285,6 @@ export default {
 
             return "maintenance";
         },
-
-
 
         editFieldType(type) {
             console.log("Sửa loại sân:", type);
@@ -339,6 +324,31 @@ export default {
     color: #555f6f;
     font-size: 14px;
     line-height: 20px;
+}
+
+.add-button {
+    border: none;
+    background: #22c55e;
+    color: #004b1e;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.add-button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.add-button .material-symbols-outlined {
+    font-size: 20px;
 }
 
 /* Stats */
@@ -457,43 +467,6 @@ export default {
     color: #191c1d;
     font-size: 14px;
     font-weight: 600;
-}
-
-.divider {
-    width: 1px;
-    height: 16px;
-    background: #cbd5e1;
-}
-
-.filter-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #64748b;
-    font-size: 14px;
-}
-
-.filter-label .material-symbols-outlined {
-    font-size: 18px;
-}
-
-.table-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.table-actions button {
-    border: none;
-    background: transparent;
-    color: #94a3b8;
-    padding: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.table-actions button:hover {
-    color: #006e2f;
 }
 
 .table-wrapper {

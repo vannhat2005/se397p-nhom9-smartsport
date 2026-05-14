@@ -180,6 +180,7 @@ export default {
 
   data() {
     return {
+      id_field: this.$route.params.id_field,
       bookingDate: "2026-05-06",
 
       field: {
