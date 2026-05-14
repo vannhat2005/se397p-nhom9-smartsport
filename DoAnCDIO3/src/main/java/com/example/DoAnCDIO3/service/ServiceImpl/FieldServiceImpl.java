@@ -2,14 +2,19 @@ package com.example.DoAnCDIO3.service.ServiceImpl;
 
 import com.example.DoAnCDIO3.dto.PageResponse;
 import com.example.DoAnCDIO3.dto.request.FieldCreateRequest;
+import com.example.DoAnCDIO3.dto.response.FieldAndPriceResponse;
+import com.example.DoAnCDIO3.dto.response.FieldPriceResponse;
 import com.example.DoAnCDIO3.dto.response.FieldResponse;
 import com.example.DoAnCDIO3.entity.Field;
+import com.example.DoAnCDIO3.entity.FieldPrice;
 import com.example.DoAnCDIO3.entity.FieldType;
 import com.example.DoAnCDIO3.entity.User;
 import com.example.DoAnCDIO3.enums.FieldEnum;
 import com.example.DoAnCDIO3.exception.AppException;
 import com.example.DoAnCDIO3.exception.ErrorCode;
 import com.example.DoAnCDIO3.mapper.FieldMapper;
+import com.example.DoAnCDIO3.mapper.FieldPriceMapper;
+import com.example.DoAnCDIO3.repository.FieldPriceRepository;
 import com.example.DoAnCDIO3.repository.FieldRepository;
 import com.example.DoAnCDIO3.repository.FieldTypeRepository;
 import com.example.DoAnCDIO3.repository.UserRepository;
@@ -35,6 +40,8 @@ public class FieldServiceImpl implements FieldService {
     UserRepository userRepository;
     FieldTypeRepository fieldTypeRepository;
     FieldMapper fieldMapper;
+    FieldPriceRepository fieldPriceRepository;
+    FieldPriceMapper fieldPriceMapper;
 
     @Override
     public FieldResponse createField(Integer ownerId, FieldCreateRequest request) {
@@ -100,11 +107,28 @@ public class FieldServiceImpl implements FieldService {
         return fieldMapper.toFieldResponse(savedField);
     }
 
-
     @Override
-    public FieldResponse getFieldById(Integer id) {
-        return null;
+    public FieldAndPriceResponse getFieldDetailWithPrices(Integer id) {
+        // 1. Tìm thông tin sân
+        Field field = fieldRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.FIELD_NOT_FOUND));
+        FieldResponse fieldResponse = fieldMapper.toFieldResponse(field);
+
+        // 2. Tìm danh sách giá của sân đó
+        List<FieldPrice> prices = fieldPriceRepository.findAllPricesByFieldId(id);
+
+        // 3. Map từ List Entity sang List DTO
+        List<FieldPriceResponse> priceResponses = prices.stream()
+                .map(fieldPriceMapper::toFieldPriceResponse)
+                .toList();
+
+        // 4. Gói tất cả vào FieldDetailResponse và trả về
+        return FieldAndPriceResponse.builder()
+                .field_info(fieldResponse)
+                .prices(priceResponses)
+                .build();
     }
+
 
     @Override
     public FieldResponse updateField(Integer id, Integer ownerId, FieldCreateRequest request) {
