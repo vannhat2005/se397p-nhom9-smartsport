@@ -1,5 +1,6 @@
 package com.example.DoAnCDIO3.mapper;
 
+import com.example.DoAnCDIO3.dto.request.UserCreateByAdminRequest;
 import com.example.DoAnCDIO3.dto.request.UserCreateRequest;
 import com.example.DoAnCDIO3.dto.response.UserResponse;
 import com.example.DoAnCDIO3.dto.update.UserUpdateRequest;
@@ -12,4 +13,5 @@ public interface  UserMapper {
     User toUser(UserCreateRequest request);
     UserResponse toUserResponse(User user);
     void updateUserFromRequest(UserUpdateRequest request, @MappingTarget User user);
+    User toUserFromAdminRequest(UserCreateByAdminRequest request);
 }

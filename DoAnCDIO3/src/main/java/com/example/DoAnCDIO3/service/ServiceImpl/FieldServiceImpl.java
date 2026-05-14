@@ -80,6 +80,26 @@ public class FieldServiceImpl implements FieldService {
         return buildPageResponse(pageData, page);
     }
 
+    @Override
+    public FieldResponse approveOrRejectField(Integer id, boolean isApproved) {
+        // 1. Tìm sân trong Database
+        Field field = fieldRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.FIELD_NOT_FOUND));
+
+        // 2. Cập nhật trạng thái dựa trên quyết định của Admin
+        if (isApproved) {
+            field.setStatus(FieldEnum.ACTIVE.getValue()); // Giả sử 1 là ACTIVE (Đã duyệt)
+            // TODO: (Tùy chọn) Gửi email hoặc thông báo cho chủ sân là sân đã được duyệt
+        } else {
+            field.setStatus(FieldEnum.INACTIVE.getValue()); // Giả sử 2 là REJECTED (Từ chối duyệt)
+            // TODO: (Tùy chọn) Gửi thông báo lý do từ chối
+        }
+
+        // 3. Lưu lại và trả về kết quả
+        Field savedField = fieldRepository.save(field);
+        return fieldMapper.toFieldResponse(savedField);
+    }
+
 
     @Override
     public FieldResponse getFieldById(Integer id) {
