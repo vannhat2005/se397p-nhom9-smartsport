@@ -8,7 +8,7 @@ const routes = [
     meta: { layout: "client" },
   },
   {
-    path: "/client/xem-chi-tiet",
+    path: "/client/xem-chi-tiet/:id_field",
     component: () => import("../components/KhachHang/XemChiTiet.vue"),
     meta: { layout: "client" },
   },

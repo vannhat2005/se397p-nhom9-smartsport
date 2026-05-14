@@ -22,7 +22,7 @@
 2026-05-12T00:43:22.585+07:00  INFO 20868 --- [DoAnCDIO3] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
-	Database version: 8.0.44
+	Database version: 5.5.5
 	Autocommit mode: undefined/unknown
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
@@ -62,7 +62,7 @@
 2026-05-12T00:46:06.767+07:00  INFO 23016 --- [DoAnCDIO3] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
-	Database version: 8.0.44
+	Database version: 5.5.5
 	Autocommit mode: undefined/unknown
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
@@ -102,7 +102,7 @@
 2026-05-12T00:54:22.124+07:00  INFO 9492 --- [DoAnCDIO3] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
-	Database version: 8.0.44
+	Database version: 5.5.5
 	Autocommit mode: undefined/unknown
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
