@@ -83,10 +83,10 @@ public class FieldTypeServiceImpl implements FieldTypeService {
                 .orElseThrow(() -> new AppException(ErrorCode.FIELD_TYPE_NOT_FOUND));
 
         // Kiểm tra nếu tên thay đổi thì tên mới có bị trùng với loại sân khác không
-        if (!fieldType.getName().equals(request.getName()) && fieldTypeRepository.existsByName(request.getName())) {
+        if (fieldTypeRepository.existsByName(request.getName())) {
             throw new AppException(ErrorCode.FIELD_TYPE_EXISTED);
         }
-
+        fieldType.setStatus(FieldTypeStatusEnum.INACTIVE.getValue());
         // MapStruct cập nhật dữ liệu từ request đắp vào entity hiện tại
         fieldTypeMapper.updateFieldTypeFromRequest(request, fieldType);
 
