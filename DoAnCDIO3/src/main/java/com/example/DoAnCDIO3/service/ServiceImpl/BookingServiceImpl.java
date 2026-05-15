@@ -17,6 +17,7 @@ import com.example.DoAnCDIO3.repository.FieldPriceRepository;
 import com.example.DoAnCDIO3.repository.FieldRepository;
 import com.example.DoAnCDIO3.repository.UserRepository;
 import com.example.DoAnCDIO3.service.BookingService;
+import com.example.DoAnCDIO3.service.FieldScheduleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -43,23 +44,34 @@ public class BookingServiceImpl implements BookingService {
     FieldRepository fieldRepository;
     FieldPriceRepository fieldPriceRepository; 
     BookingMapper bookingMapper;
+    FieldScheduleService fieldScheduleService;
 
 
     @Override
     public BookingResponse createBooking(Integer customerId, BookingCreateRequest request) {
-        // 1. Validate giờ giấc
+
+        // Kiểm tra giờ bắt đầu và giờ kết thúc phải là giờ chẵn (Số phút = 0)
+        if (request.getStart_time().getMinute() != 0 || request.getEnd_time().getMinute() != 0) {
+            throw new AppException(ErrorCode.BOOKING_TIME_NOT_ROUND);
+        }
+
+        // Kiểm tra giờ kết thúc phải lớn hơn giờ bắt đầu
         if (!request.getEnd_time().isAfter(request.getStart_time())) {
             throw new AppException(ErrorCode.BOOKING_TIME_INVALID);
         }
 
-        // 2. Tìm User và Field
+        // ==========================================
+        // 2. TÌM USER VÀ FIELD
+        // ==========================================
         User customer = userRepository.findById(customerId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         Field field = fieldRepository.findById(request.getField_id())
                 .orElseThrow(() -> new AppException(ErrorCode.FIELD_NOT_FOUND));
 
-        // 3. Kiểm tra trùng lịch
+        // ==========================================
+        // 3. KIỂM TRA TRÙNG LỊCH (OVERLAPPING)
+        // ==========================================
         boolean isOverlapping = bookingRepository.existsOverlappingBooking(
                 field.getId(),
                 request.getBooking_date(),
@@ -87,14 +99,16 @@ public class BookingServiceImpl implements BookingService {
         // Tính toán tổng tiền
         long minutes = Duration.between(request.getStart_time(), request.getEnd_time()).toMinutes();
         BigDecimal totalAmount = fieldPrice.getPrice().multiply(BigDecimal.valueOf((double) minutes / 60));
-        // ==========================================
 
-        // 5. Tạo mã Booking ngẫu nhiên
+        // ==========================================
+        // 5. TẠO MÃ BOOKING & LƯU DATABASE
+        // ==========================================
+        // Tạo mã Booking ngẫu nhiên
         String dateStr = request.getBooking_date().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String randomStr = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
         String bookingCode = "BK-" + dateStr + "-" + randomStr;
 
-        // 6. Dùng MapStruct tạo Entity
+        // Dùng MapStruct tạo Entity
         Booking booking = bookingMapper.toBooking(request);
         booking.setBooking_code(bookingCode);
         booking.setUser_id(customer);
@@ -103,8 +117,13 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(BookingEnum.PENDING.getValue());
         booking.setCreated_at(LocalDateTime.now());
 
-        // 7. Lưu và trả về
+        // Lưu và trả về
         Booking savedBooking = bookingRepository.save(booking);
+
+        // Tích hợp việc tự động chia nhỏ thời gian (FieldSchedule) ngay sau khi tạo đơn thành công
+        // Nếu sếp chưa có biến fieldScheduleService thì nhớ khai báo ở đầu class nhé!
+        fieldScheduleService.generateSchedulesForBooking(savedBooking);
+
         return bookingMapper.toBookingResponse(savedBooking);
     }
 

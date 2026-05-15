@@ -48,6 +48,7 @@ public enum ErrorCode {
     PRICE_MIN_INVALID(1204, "Giá tiền phải lớn hơn 0.", HttpStatus.BAD_REQUEST),
     PRICE_TIME_INVALID(1205, "Giờ kết thúc phải sau giờ bắt đầu.", HttpStatus.BAD_REQUEST),
     PRICE_NOT_FOUND(1206, "Không tìm thấy bảng giá thiết lập cho khung giờ này.", HttpStatus.NOT_FOUND),
+    PRICE_TIME_OUT_OF_BOUNDS(1207, "Khung giờ cấu hình giá phải nằm trong thời gian hoạt động của sân.", HttpStatus.BAD_REQUEST),
 
     // ==========================================
     // 4. MODULE BOOKING (1300 - 1399)
@@ -60,6 +61,7 @@ public enum ErrorCode {
     BOOKING_OVERLAPPED(1306, "Rất tiếc, sân bóng vào khung giờ này đã có người đặt.", HttpStatus.CONFLICT),
     BOOKING_NOT_FOUND(1307, "Không tìm thấy thông tin đặt sân.", HttpStatus.NOT_FOUND),
     BOOKING_ALREADY_PROCESSED(1308, "Lịch đặt này đã được xử lý (duyệt hoặc từ chối) trước đó.", HttpStatus.BAD_REQUEST),
+    BOOKING_TIME_NOT_ROUND(1309, "Thời gian đặt sân phải là giờ chẵn (VD: 17:00, 18:00). Không hỗ trợ đặt lẻ phút.", HttpStatus.BAD_REQUEST),
 
     // ==========================================
     // 5. MODULE PAYMENT & BANK ACCOUNT (1400 - 1499)
