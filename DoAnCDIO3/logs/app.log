@@ -1,6 +1,0 @@
-2026-05-15T01:03:14.413+07:00  WARN 12932 --- [DoAnCDIO3] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6m40s750ms706µs600ns).
-2026-05-15T06:03:44.723+07:00  INFO 12932 --- [DoAnCDIO3] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
-2026-05-15T06:03:44.822+07:00  INFO 12932 --- [DoAnCDIO3] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
-2026-05-15T06:03:44.894+07:00  INFO 12932 --- [DoAnCDIO3] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-05-15T06:03:44.960+07:00  INFO 12932 --- [DoAnCDIO3] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2026-05-15T06:03:44.998+07:00  INFO 12932 --- [DoAnCDIO3] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

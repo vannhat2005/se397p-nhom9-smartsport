@@ -32,23 +32,34 @@ public class FieldPriceServiceImpl implements FieldPriceService {
 
     @Override
     public FieldPriceResponse createFieldPrice(FieldPriceRequest request) {
-        // 1. Validate thời gian
+        // 1. Validate thời gian cơ bản (Giờ kết thúc phải sau giờ bắt đầu)
         if (!request.getEnd_time().isAfter(request.getStart_time())) {
             throw new AppException(ErrorCode.PRICE_TIME_INVALID);
         }
 
-        // 2. Tìm sân bóng
+        // 2. Tìm sân bóng (Tìm trước để lấy được giờ hoạt động của sân)
         Field field = fieldRepository.findById(request.getField_id())
                 .orElseThrow(() -> new AppException(ErrorCode.FIELD_NOT_FOUND));
 
-        // 3. Dùng Mapper chuyển từ Request sang Entity chỉ trong 1 nốt nhạc
-        FieldPrice fieldPrice = fieldPriceMapper.toFieldPrice(request);
-        fieldPrice.setField_id(field); // Set thủ công thuộc tính Field vì Mapper đang ignore
+        // 3. LOGIC MỚI: Kiểm tra thời gian setup giá phải nằm trong giờ mở/đóng cửa của sân
+        // Giả sử bảng Field của sếp có 2 biến là open_time và close_time
+        if (request.getStart_time().isBefore(field.getOpen_time()) ||
+                request.getEnd_time().isAfter(field.getClose_time())) {
 
-        // 4. Lưu vào Database
+            // Sếp nhớ thêm mã lỗi này vào enum ErrorCode nhé (VD: "Thời gian giá tiền vượt quá giờ hoạt động của sân!")
+            throw new AppException(ErrorCode.PRICE_TIME_OUT_OF_BOUNDS);
+        }
+
+        // 4. Dùng Mapper chuyển từ Request sang Entity
+        FieldPrice fieldPrice = fieldPriceMapper.toFieldPrice(request);
+
+        // Lưu ý: Hôm trước chúng ta đã thống nhất đổi tên biến trong Entity thành 'field' rồi nhé
+        fieldPrice.setField_id(field);
+
+        // 5. Lưu vào Database
         FieldPrice savedFieldPrice = fieldPriceRepository.save(fieldPrice);
 
-        // 5. Dùng Mapper trả về Response
+        // 6. Dùng Mapper trả về Response
         return fieldPriceMapper.toFieldPriceResponse(savedFieldPrice);
     }
 
