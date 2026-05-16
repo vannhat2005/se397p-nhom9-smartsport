@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class UserResponse {
     Integer id;
     String role_name; // Trả về tên role thay vì id cho FE dễ hiển thị
+    String role_id;
     String full_name;
     String email;
     String phone;

@@ -1,0 +1,172 @@
+2026-05-15T07:44:37.068+07:00  INFO 14456 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : Starting DoAnCdio3Application using Java 21.0.8 with PID 14456 (E:\CODE\SpringBoots\do-an\se397p-nhom9-smartsport\DoAnCDIO3\target\classes started by ADMIN in E:\CODE\SpringBoots\do-an\se397p-nhom9-smartsport\DoAnCDIO3)
+2026-05-15T07:44:37.074+07:00  INFO 14456 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : No active profile set, falling back to 1 default profile: "default"
+2026-05-15T07:44:40.220+07:00  INFO 14456 --- [DoAnCDIO3] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-15T07:44:40.485+07:00  INFO 14456 --- [DoAnCDIO3] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 238 ms. Found 9 JPA repository interfaces.
+2026-05-15T07:44:42.100+07:00  INFO 14456 --- [DoAnCDIO3] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-05-15T07:44:42.132+07:00  INFO 14456 --- [DoAnCDIO3] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-15T07:44:42.132+07:00  INFO 14456 --- [DoAnCDIO3] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.54]
+2026-05-15T07:44:42.301+07:00  INFO 14456 --- [DoAnCDIO3] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-15T07:44:42.301+07:00  INFO 14456 --- [DoAnCDIO3] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 5081 ms
+2026-05-15T07:44:43.679+07:00  INFO 14456 --- [DoAnCDIO3] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-15T07:44:43.963+07:00  INFO 14456 --- [DoAnCDIO3] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.49.Final
+2026-05-15T07:44:44.138+07:00  INFO 14456 --- [DoAnCDIO3] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-15T07:44:46.428+07:00  INFO 14456 --- [DoAnCDIO3] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-15T07:44:46.619+07:00  INFO 14456 --- [DoAnCDIO3] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-15T07:44:47.270+07:00  INFO 14456 --- [DoAnCDIO3] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@20be890d
+2026-05-15T07:44:47.278+07:00  INFO 14456 --- [DoAnCDIO3] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-15T07:44:47.420+07:00  WARN 14456 --- [DoAnCDIO3] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2026-05-15T07:44:47.464+07:00  INFO 14456 --- [DoAnCDIO3] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-15T07:44:49.838+07:00  INFO 14456 --- [DoAnCDIO3] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-15T07:44:50.191+07:00  INFO 14456 --- [DoAnCDIO3] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-15T07:44:51.504+07:00  INFO 14456 --- [DoAnCDIO3] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-15T07:44:53.886+07:00  WARN 14456 --- [DoAnCDIO3] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-15T07:44:54.840+07:00  INFO 14456 --- [DoAnCDIO3] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-05-15T07:44:54.860+07:00  INFO 14456 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : Started DoAnCdio3Application in 20.042 seconds (process running for 21.694)
+2026-05-15T07:44:54.867+07:00  INFO 14456 --- [DoAnCDIO3] [main] c.e.D.c.ApplicationInitConfig            : Bắt đầu khởi tạo dữ liệu mặc định...
+2026-05-15T07:44:55.136+07:00  INFO 14456 --- [DoAnCDIO3] [main] c.e.D.c.ApplicationInitConfig            : Khởi tạo dữ liệu hoàn tất!
+2026-05-15T07:46:30.060+07:00  INFO 14456 --- [DoAnCDIO3] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-15T07:46:30.068+07:00  INFO 14456 --- [DoAnCDIO3] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-15T07:46:30.068+07:00  INFO 14456 --- [DoAnCDIO3] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2026-05-15T08:50:24.807+07:00  WARN 14456 --- [DoAnCDIO3] [http-nio-8080-exec-9] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported]
+2026-05-15T08:50:36.793+07:00  WARN 14456 --- [DoAnCDIO3] [http-nio-8080-exec-1] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported]
+2026-05-15T08:50:42.199+07:00  WARN 14456 --- [DoAnCDIO3] [http-nio-8080-exec-4] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported]
+2026-05-15T14:26:34.123+07:00  WARN 14456 --- [DoAnCDIO3] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=5h31m15s598ms520µs400ns).
+2026-05-15T15:37:49.813+07:00  WARN 14456 --- [DoAnCDIO3] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6m14s753ms212µs).
+2026-05-15T15:50:26.027+07:00  INFO 14456 --- [DoAnCDIO3] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-05-15T15:50:26.116+07:00  INFO 14456 --- [DoAnCDIO3] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2026-05-15T15:50:26.248+07:00  INFO 14456 --- [DoAnCDIO3] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-15T15:50:26.383+07:00  INFO 14456 --- [DoAnCDIO3] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-05-15T15:50:26.423+07:00  INFO 14456 --- [DoAnCDIO3] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-05-15T15:50:36.078+07:00  INFO 9264 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : Starting DoAnCdio3Application using Java 21.0.8 with PID 9264 (E:\CODE\SpringBoots\do-an\se397p-nhom9-smartsport\DoAnCDIO3\target\classes started by ADMIN in E:\CODE\SpringBoots\do-an\se397p-nhom9-smartsport\DoAnCDIO3)
+2026-05-15T15:50:36.086+07:00  INFO 9264 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : No active profile set, falling back to 1 default profile: "default"
+2026-05-15T15:50:38.510+07:00  INFO 9264 --- [DoAnCDIO3] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-15T15:50:38.780+07:00  INFO 9264 --- [DoAnCDIO3] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 233 ms. Found 9 JPA repository interfaces.
+2026-05-15T15:50:40.360+07:00  INFO 9264 --- [DoAnCDIO3] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-05-15T15:50:40.400+07:00  INFO 9264 --- [DoAnCDIO3] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-15T15:50:40.400+07:00  INFO 9264 --- [DoAnCDIO3] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.54]
+2026-05-15T15:50:40.582+07:00  INFO 9264 --- [DoAnCDIO3] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-15T15:50:40.584+07:00  INFO 9264 --- [DoAnCDIO3] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4343 ms
+2026-05-15T15:50:41.114+07:00  INFO 9264 --- [DoAnCDIO3] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-15T15:50:41.302+07:00  INFO 9264 --- [DoAnCDIO3] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.49.Final
+2026-05-15T15:50:41.439+07:00  INFO 9264 --- [DoAnCDIO3] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-15T15:50:42.241+07:00  INFO 9264 --- [DoAnCDIO3] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-15T15:50:42.337+07:00  INFO 9264 --- [DoAnCDIO3] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-15T15:50:42.751+07:00  INFO 9264 --- [DoAnCDIO3] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@48e74764
+2026-05-15T15:50:42.758+07:00  INFO 9264 --- [DoAnCDIO3] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-15T15:50:42.904+07:00  WARN 9264 --- [DoAnCDIO3] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2026-05-15T15:50:42.956+07:00  INFO 9264 --- [DoAnCDIO3] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-15T15:50:44.907+07:00  INFO 9264 --- [DoAnCDIO3] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-15T15:50:45.219+07:00  INFO 9264 --- [DoAnCDIO3] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-15T15:50:46.162+07:00  INFO 9264 --- [DoAnCDIO3] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-15T15:50:48.046+07:00  WARN 9264 --- [DoAnCDIO3] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-15T15:50:49.045+07:00  INFO 9264 --- [DoAnCDIO3] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-05-15T15:50:49.059+07:00  INFO 9264 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : Started DoAnCdio3Application in 14.604 seconds (process running for 15.784)
+2026-05-15T15:50:49.065+07:00  INFO 9264 --- [DoAnCDIO3] [main] c.e.D.c.ApplicationInitConfig            : Bắt đầu khởi tạo dữ liệu mặc định...
+2026-05-15T15:50:49.603+07:00  INFO 9264 --- [DoAnCDIO3] [main] c.e.D.c.ApplicationInitConfig            : Khởi tạo dữ liệu hoàn tất!
+2026-05-15T15:51:13.520+07:00  INFO 9264 --- [DoAnCDIO3] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-15T15:51:13.520+07:00  INFO 9264 --- [DoAnCDIO3] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-15T15:51:13.522+07:00  INFO 9264 --- [DoAnCDIO3] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-05-15T16:17:34.703+07:00  WARN 9264 --- [DoAnCDIO3] [http-nio-8080-exec-6] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpMediaTypeNotSupportedException: Content-Type 'text/plain;charset=UTF-8' is not supported]
+2026-05-15T16:17:53.311+07:00  WARN 9264 --- [DoAnCDIO3] [http-nio-8080-exec-7] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpMediaTypeNotSupportedException: Content-Type 'text/plain;charset=UTF-8' is not supported]
+2026-05-15T16:18:30.801+07:00  WARN 9264 --- [DoAnCDIO3] [http-nio-8080-exec-8] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpMediaTypeNotSupportedException: Content-Type 'text/plain;charset=UTF-8' is not supported]
+2026-05-15T17:09:58.494+07:00  INFO 9264 --- [DoAnCDIO3] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-05-15T17:09:58.578+07:00  INFO 9264 --- [DoAnCDIO3] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2026-05-15T17:09:58.655+07:00  INFO 9264 --- [DoAnCDIO3] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-15T17:09:58.742+07:00  INFO 9264 --- [DoAnCDIO3] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-05-15T17:09:58.774+07:00  INFO 9264 --- [DoAnCDIO3] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-05-15T17:10:06.590+07:00  INFO 22620 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : Starting DoAnCdio3Application using Java 21.0.8 with PID 22620 (E:\CODE\SpringBoots\do-an\se397p-nhom9-smartsport\DoAnCDIO3\target\classes started by ADMIN in E:\CODE\SpringBoots\do-an\se397p-nhom9-smartsport\DoAnCDIO3)
+2026-05-15T17:10:06.597+07:00  INFO 22620 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : No active profile set, falling back to 1 default profile: "default"
+2026-05-15T17:10:08.824+07:00  INFO 22620 --- [DoAnCDIO3] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-15T17:10:09.096+07:00  INFO 22620 --- [DoAnCDIO3] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 240 ms. Found 9 JPA repository interfaces.
+2026-05-15T17:10:10.200+07:00  INFO 22620 --- [DoAnCDIO3] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-05-15T17:10:10.224+07:00  INFO 22620 --- [DoAnCDIO3] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-15T17:10:10.224+07:00  INFO 22620 --- [DoAnCDIO3] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.54]
+2026-05-15T17:10:10.312+07:00  INFO 22620 --- [DoAnCDIO3] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-15T17:10:10.313+07:00  INFO 22620 --- [DoAnCDIO3] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3604 ms
+2026-05-15T17:10:10.653+07:00  INFO 22620 --- [DoAnCDIO3] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-15T17:10:10.759+07:00  INFO 22620 --- [DoAnCDIO3] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.49.Final
+2026-05-15T17:10:10.828+07:00  INFO 22620 --- [DoAnCDIO3] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-15T17:10:11.328+07:00  INFO 22620 --- [DoAnCDIO3] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-15T17:10:11.387+07:00  INFO 22620 --- [DoAnCDIO3] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-15T17:10:11.692+07:00  INFO 22620 --- [DoAnCDIO3] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3f6f9cef
+2026-05-15T17:10:11.695+07:00  INFO 22620 --- [DoAnCDIO3] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-15T17:10:11.784+07:00  WARN 22620 --- [DoAnCDIO3] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2026-05-15T17:10:11.828+07:00  INFO 22620 --- [DoAnCDIO3] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-15T17:10:13.170+07:00  INFO 22620 --- [DoAnCDIO3] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-15T17:10:13.383+07:00  INFO 22620 --- [DoAnCDIO3] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-15T17:10:13.912+07:00  INFO 22620 --- [DoAnCDIO3] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-15T17:10:15.165+07:00  WARN 22620 --- [DoAnCDIO3] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-15T17:10:15.817+07:00  INFO 22620 --- [DoAnCDIO3] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-05-15T17:10:15.830+07:00  INFO 22620 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : Started DoAnCdio3Application in 10.421 seconds (process running for 11.256)
+2026-05-15T17:10:15.837+07:00  INFO 22620 --- [DoAnCDIO3] [main] c.e.D.c.ApplicationInitConfig            : Bắt đầu khởi tạo dữ liệu mặc định...
+2026-05-15T17:10:16.011+07:00  INFO 22620 --- [DoAnCDIO3] [main] c.e.D.c.ApplicationInitConfig            : Khởi tạo dữ liệu hoàn tất!
+2026-05-15T17:10:37.633+07:00  INFO 22620 --- [DoAnCDIO3] [http-nio-8080-exec-3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-15T17:10:37.633+07:00  INFO 22620 --- [DoAnCDIO3] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-15T17:10:37.635+07:00  INFO 22620 --- [DoAnCDIO3] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-05-15T17:18:50.449+07:00  INFO 22620 --- [DoAnCDIO3] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-05-15T17:18:50.530+07:00  INFO 22620 --- [DoAnCDIO3] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2026-05-15T17:18:50.596+07:00  INFO 22620 --- [DoAnCDIO3] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-15T17:18:50.724+07:00  INFO 22620 --- [DoAnCDIO3] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-05-15T17:18:50.928+07:00  INFO 22620 --- [DoAnCDIO3] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-05-15T17:20:26.126+07:00  INFO 18344 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : Starting DoAnCdio3Application using Java 21.0.8 with PID 18344 (E:\CODE\SpringBoots\do-an\se397p-nhom9-smartsport\DoAnCDIO3\target\classes started by ADMIN in E:\CODE\SpringBoots\do-an\se397p-nhom9-smartsport\DoAnCDIO3)
+2026-05-15T17:20:26.130+07:00  INFO 18344 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : No active profile set, falling back to 1 default profile: "default"
+2026-05-15T17:20:27.909+07:00  INFO 18344 --- [DoAnCDIO3] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-15T17:20:28.134+07:00  INFO 18344 --- [DoAnCDIO3] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 202 ms. Found 9 JPA repository interfaces.
+2026-05-15T17:20:29.203+07:00  INFO 18344 --- [DoAnCDIO3] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-05-15T17:20:29.238+07:00  INFO 18344 --- [DoAnCDIO3] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-15T17:20:29.238+07:00  INFO 18344 --- [DoAnCDIO3] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.54]
+2026-05-15T17:20:29.357+07:00  INFO 18344 --- [DoAnCDIO3] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-15T17:20:29.358+07:00  INFO 18344 --- [DoAnCDIO3] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3145 ms
+2026-05-15T17:20:29.730+07:00  INFO 18344 --- [DoAnCDIO3] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-15T17:20:29.848+07:00  INFO 18344 --- [DoAnCDIO3] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.49.Final
+2026-05-15T17:20:29.915+07:00  INFO 18344 --- [DoAnCDIO3] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-15T17:20:30.469+07:00  INFO 18344 --- [DoAnCDIO3] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-15T17:20:30.527+07:00  INFO 18344 --- [DoAnCDIO3] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-15T17:20:30.844+07:00  INFO 18344 --- [DoAnCDIO3] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6c24f61d
+2026-05-15T17:20:30.847+07:00  INFO 18344 --- [DoAnCDIO3] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-15T17:20:30.931+07:00  WARN 18344 --- [DoAnCDIO3] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2026-05-15T17:20:30.971+07:00  INFO 18344 --- [DoAnCDIO3] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-15T17:20:32.427+07:00  INFO 18344 --- [DoAnCDIO3] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-15T17:20:32.655+07:00  INFO 18344 --- [DoAnCDIO3] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-15T17:20:33.320+07:00  INFO 18344 --- [DoAnCDIO3] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-15T17:20:34.627+07:00  WARN 18344 --- [DoAnCDIO3] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-15T17:20:35.627+07:00  INFO 18344 --- [DoAnCDIO3] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-05-15T17:20:35.643+07:00  INFO 18344 --- [DoAnCDIO3] [main] c.e.DoAnCDIO3.DoAnCdio3Application       : Started DoAnCdio3Application in 10.681 seconds (process running for 11.573)
+2026-05-15T17:20:35.654+07:00  INFO 18344 --- [DoAnCDIO3] [main] c.e.D.c.ApplicationInitConfig            : Bắt đầu khởi tạo dữ liệu mặc định...
+2026-05-15T17:20:35.890+07:00  INFO 18344 --- [DoAnCDIO3] [main] c.e.D.c.ApplicationInitConfig            : Khởi tạo dữ liệu hoàn tất!
+2026-05-15T17:20:48.776+07:00  INFO 18344 --- [DoAnCDIO3] [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-15T17:20:48.776+07:00  INFO 18344 --- [DoAnCDIO3] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-15T17:20:48.780+07:00  INFO 18344 --- [DoAnCDIO3] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2026-05-15T19:14:16.131+07:00  INFO 18344 --- [DoAnCDIO3] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-05-15T19:14:16.237+07:00  INFO 18344 --- [DoAnCDIO3] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2026-05-15T19:14:16.321+07:00  INFO 18344 --- [DoAnCDIO3] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-15T19:14:16.402+07:00  INFO 18344 --- [DoAnCDIO3] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-05-15T19:14:16.426+07:00  INFO 18344 --- [DoAnCDIO3] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

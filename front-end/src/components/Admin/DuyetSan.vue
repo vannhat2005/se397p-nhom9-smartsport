@@ -20,7 +20,7 @@
                 </div>
 
                 <p>Đang chờ duyệt</p>
-                <h3>{{ totalPending }}</h3>
+                <h3>{{ totalElements }}</h3>
             </div>
 
             <div class="stat-card">
@@ -57,7 +57,7 @@
                     <img class="field-image" :src="field.image" :alt="field.name" />
 
                     <div class="field-type-badge">
-                        {{ field.type }}
+                        {{ field.field_type_name }}
                     </div>
                 </div>
 
@@ -72,12 +72,12 @@
                     <div class="field-info-grid">
                         <div>
                             <span>Chủ sở hữu</span>
-                            <strong>{{ getOwnerName(field.ownerId) }}</strong>
+                            <strong>{{ field.owner_name || "Không rõ chủ sân" }}</strong>
                         </div>
 
                         <div>
                             <span>Ngày gửi</span>
-                            <strong>{{ field.createdDate }}</strong>
+                            <strong>{{ formatDate(field.created_at) }}</strong>
                         </div>
                     </div>
 
@@ -97,15 +97,19 @@
                     </div>
                 </div>
             </div>
+
+            <div v-if="displayedFields.length === 0" class="empty-box">
+                Không có sân nào đang chờ duyệt.
+            </div>
         </div>
 
         <!-- Pagination -->
         <div class="pagination-row">
             <p>
                 Hiển thị
-                <span>{{ displayedFields.length }}</span>
+                <span>{{ totalElements === 0 ? 0 : startIndex + 1 }} - {{ endIndex }}</span>
                 trên
-                <span>{{ totalPending }}</span>
+                <span>{{ totalElements }}</span>
                 yêu cầu
             </p>
 
@@ -128,195 +132,133 @@
 </template>
 
 <script>
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default {
     name: "DuyetSan",
 
     data() {
         return {
             currentPage: 1,
-            perPage: 4,
+            pageSize: 4,
+            totalPages: 1,
+            totalElements: 0,
 
             approvedCount: 142,
             rejectedCount: 18,
 
-            // Đồng bộ với danh sách chủ sân trong Quản lý người dùng
-            owners: [
-                {
-                    id: 2,
-                    fullName: "Trần Thị Hoa",
-                    email: "hoa.tt@sports.vn",
-                    phone: "0912 345 678",
-                    role: "chu_san",
-                },
-                {
-                    id: 9,
-                    fullName: "Ngô Thanh Bình",
-                    email: "binhnt@email.com",
-                    phone: "0988 888 888",
-                    role: "chu_san",
-                },
-                {
-                    id: 10,
-                    fullName: "Trần Văn Chủ",
-                    email: "chusan1@email.com",
-                    phone: "0911 111 111",
-                    role: "chu_san",
-                },
-            ],
+            pendingFields: [],
 
-            // Đây là sân mới đăng ký, CHƯA DUYỆT
-            // Không lấy 15 sân đang hiện ở Client
-            pendingFields: [
-                {
-                    id: 1,
-                    ownerId: 2,
-                    name: "Sân bóng đá Hoa Sen Arena",
-                    type: "Bóng đá",
-                    address: "45 Nguyễn Trãi, Thanh Xuân, Hà Nội",
-                    createdDate: "15/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1459865264687-595d652de67e?q=80&w=1200",
-                },
-                {
-                    id: 2,
-                    ownerId: 2,
-                    name: "Sân bóng rổ Sunrise Court",
-                    type: "Bóng rổ",
-                    address: "88 Hoàng Quốc Việt, Cầu Giấy, Hà Nội",
-                    createdDate: "14/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1200",
-                },
-                {
-                    id: 3,
-                    ownerId: 2,
-                    name: "Sân cầu lông Green Shuttle",
-                    type: "Cầu lông",
-                    address: "12 Lê Văn Lương, Thanh Xuân, Hà Nội",
-                    createdDate: "13/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?q=80&w=1200",
-                },
-                {
-                    id: 4,
-                    ownerId: 2,
-                    name: "Sân bóng chuyền Sao Mai",
-                    type: "Bóng chuyền",
-                    address: "26 Trường Chinh, Đống Đa, Hà Nội",
-                    createdDate: "12/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1200",
-                },
-                {
-                    id: 5,
-                    ownerId: 9,
-                    name: "Sân bóng đá Hải Phòng Sport",
-                    type: "Bóng đá",
-                    address: "55 Lạch Tray, Ngô Quyền, Hải Phòng",
-                    createdDate: "11/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1200",
-                },
-                {
-                    id: 6,
-                    ownerId: 9,
-                    name: "Sân bóng rổ River Side",
-                    type: "Bóng rổ",
-                    address: "18 Bạch Đằng, Hồng Bàng, Hải Phòng",
-                    createdDate: "10/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1505666287802-931dc83a7fe4?q=80&w=1200",
-                },
-                {
-                    id: 7,
-                    ownerId: 9,
-                    name: "Sân cầu lông Hải Âu",
-                    type: "Cầu lông",
-                    address: "72 Văn Cao, Ngô Quyền, Hải Phòng",
-                    createdDate: "09/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?q=80&w=1200",
-                },
-                {
-                    id: 8,
-                    ownerId: 9,
-                    name: "Sân bóng chuyền Biển Đông",
-                    type: "Bóng chuyền",
-                    address: "30 Lê Hồng Phong, Hải Phòng",
-                    createdDate: "08/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1592656094267-764a45160876?q=80&w=1200",
-                },
-                {
-                    id: 9,
-                    ownerId: 10,
-                    name: "Sân bóng đá Nam Sài Gòn",
-                    type: "Bóng đá",
-                    address: "101 Nguyễn Hữu Thọ, Quận 7, TP.HCM",
-                    createdDate: "07/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1518604666860-9ed391f76460?q=80&w=1200",
-                },
-                {
-                    id: 10,
-                    ownerId: 10,
-                    name: "Sân bóng rổ Galaxy Arena",
-                    type: "Bóng rổ",
-                    address: "22 Nguyễn Văn Linh, Quận 7, TP.HCM",
-                    createdDate: "06/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=1200",
-                },
-                {
-                    id: 11,
-                    ownerId: 10,
-                    name: "Sân cầu lông Tân Phú Center",
-                    type: "Cầu lông",
-                    address: "39 Lũy Bán Bích, Tân Phú, TP.HCM",
-                    createdDate: "05/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1613918431703-aa50889e3be9?q=80&w=1200",
-                },
-                {
-                    id: 12,
-                    ownerId: 10,
-                    name: "Sân bóng chuyền Phương Nam",
-                    type: "Bóng chuyền",
-                    address: "64 Phan Văn Trị, Bình Thạnh, TP.HCM",
-                    createdDate: "04/10/2023",
-                    image:
-                        "https://images.unsplash.com/photo-1609710228159-0fa9bd7c0827?q=80&w=1200",
-                },
-            ],
+            defaultImage:
+                "https://images.unsplash.com/photo-1459865264687-595d652de67e?q=80&w=1200",
         };
     },
 
     computed: {
-        totalPending() {
-            return this.pendingFields.length;
-        },
-
-        totalPages() {
-            return Math.ceil(this.pendingFields.length / this.perPage);
-        },
-
         startIndex() {
-            return (this.currentPage - 1) * this.perPage;
+            return (this.currentPage - 1) * this.pageSize;
         },
 
         displayedFields() {
-            const start = this.startIndex;
-            const end = start + this.perPage;
+            return this.pendingFields;
+        },
 
-            return this.pendingFields.slice(start, end);
+        endIndex() {
+            return this.startIndex + this.displayedFields.length;
         },
     },
 
-    methods: {
-        getOwnerName(ownerId) {
-            const owner = this.owners.find((item) => item.id === ownerId);
+    mounted() {
+        this.loadPendingFields();
+    },
 
-            return owner ? owner.fullName : "Không rõ chủ sân";
+    methods: {
+        loadPendingFields() {
+            axios
+                .get(`${API_BASE_URL}/api/fields/admin/pending`, {
+                    params: {
+                        page: this.currentPage,
+                        size: this.pageSize,
+                    },
+                })
+                .then((response) => {
+                    const pageData = response.data.data;
+
+                    this.pendingFields = pageData.data.map((field) => ({
+                        id: field.id,
+                        user_id: field.user_id ?? field.userId,
+                        owner_name: field.owner_name ?? field.ownerName,
+                        field_type_id: field.field_type_id ?? field.fieldTypeId,
+                        field_type_name:
+                            field.field_type_name ??
+                            field.fieldTypeName ??
+                            "Đang cập nhật",
+                        name: field.name,
+                        address: field.address,
+                        description: field.description,
+                        open_time: field.open_time ?? field.openTime,
+                        close_time: field.close_time ?? field.closeTime,
+                        status: field.status,
+                        created_at: field.created_at ?? field.createdAt,
+                        updated_at: field.updated_at ?? field.updatedAt,
+
+                        // Tạm thời dùng ảnh chung
+                        image: field.image || this.defaultImage,
+                    }));
+
+                    this.currentPage = pageData.currentPage;
+                    this.pageSize = pageData.pageSize;
+                    this.totalPages = pageData.totalPages || 1;
+                    this.totalElements = pageData.totalElements;
+                })
+                .catch((error) => {
+                    console.error("Lỗi khi tải danh sách sân chờ duyệt:", error);
+                    alert("Không thể tải danh sách sân chờ duyệt. Vui lòng thử lại sau.");
+                });
+        },
+
+        approveField(field) {
+            if (!confirm(`Bạn có chắc muốn phê duyệt sân "${field.name}" không?`)) {
+                return;
+            }
+
+            axios
+                .put(`${API_BASE_URL}/api/fields/admin/${field.id}/approve`, null, {
+                    params: {
+                        isApproved: true,
+                    },
+                })
+                .then((response) => {
+                    this.$toast.success(response.data.message || "Đã duyệt sân thành công.");
+                    this.loadPendingFields();
+                })
+                .catch((error) => {
+                    console.error("Lỗi khi duyệt sân:", error);
+                    this.$toast.error("Duyệt sân thất bại. Vui lòng thử lại.");
+                });
+        },
+
+        rejectField(field) {
+            if (!confirm(`Bạn có chắc muốn từ chối sân "${field.name}" không?`)) {
+                return;
+            }
+
+            axios
+                .put(`${API_BASE_URL}/api/fields/admin/${field.id}/approve`, null, {
+                    params: {
+                        isApproved: false,
+                    },
+                })
+                .then((response) => {
+                    this.$toast.success(response.data.message || "Đã từ chối sân bóng.");
+                    this.loadPendingFields();
+                })
+                .catch((error) => {
+                    console.error("Lỗi khi từ chối sân:", error);
+                    this.$toast.error("Từ chối sân thất bại. Vui lòng thử lại.");
+                });
         },
 
         goToPage(page) {
@@ -325,6 +267,7 @@ export default {
             }
 
             this.currentPage = page;
+            this.loadPendingFields();
         },
 
         prevPage() {
@@ -335,20 +278,18 @@ export default {
             this.goToPage(this.currentPage + 1);
         },
 
-        approveField(field) {
-            alert(
-                `Đã phê duyệt sân "${field.name}" của chủ sân ${this.getOwnerName(
-                    field.ownerId
-                )}`
-            );
-        },
+        formatDate(dateString) {
+            if (!dateString) {
+                return "Đang cập nhật";
+            }
 
-        rejectField(field) {
-            alert(
-                `Đã từ chối sân "${field.name}" của chủ sân ${this.getOwnerName(
-                    field.ownerId
-                )}`
-            );
+            const date = new Date(dateString);
+
+            if (Number.isNaN(date.getTime())) {
+                return dateString;
+            }
+
+            return date.toLocaleDateString("vi-VN");
         },
     },
 };
@@ -633,6 +574,17 @@ export default {
 
 .reject-button:hover {
     background: #fef2f2;
+}
+
+.empty-box {
+    grid-column: 1 / -1;
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    color: #64748b;
+    font-weight: 700;
 }
 
 /* Pagination */

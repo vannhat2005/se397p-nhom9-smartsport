@@ -1,11 +1,11 @@
 package com.example.DoAnCDIO3.enums;
 
 public enum FieldEnum {
-    PENDING(2),
+    PENDING(0),
 
     ACTIVE(1),
 
-    INACTIVE(0);
+    INACTIVE(2);
 
     private final int value;
 
