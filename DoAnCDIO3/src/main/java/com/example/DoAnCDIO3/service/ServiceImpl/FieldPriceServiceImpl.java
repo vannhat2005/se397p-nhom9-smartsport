@@ -19,6 +19,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 @Service
 @Slf4j
@@ -118,5 +121,30 @@ public class FieldPriceServiceImpl implements FieldPriceService {
     @Override
     public void deleteFieldPrice(Integer id) {
 
+    }
+
+    @Override
+    public List<FieldPriceResponse> getPricesByDate(Integer fieldId) {
+        // [NÂNG CẤP 1]: Kiểm tra sân tồn tại
+        if (!fieldRepository.existsById(fieldId)) {
+            throw new AppException(ErrorCode.FIELD_NOT_FOUND);
+        }
+
+        // [NÂNG CẤP 2]: Tự động lấy ngày hôm nay theo chuẩn múi giờ Việt Nam (Tránh lỗi lệch giờ khi deploy server)
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+
+        // 1. Phân tích xem HÔM NAY là thứ mấy
+        DayOfWeek dayOfWeek = today.getDayOfWeek();
+
+        // 2. Phân loại: T7, CN thì dayType = 2 (Cuối tuần). Các ngày còn lại (T2->T6) dayType = 1 (Ngày thường)
+        int currentDayType = (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) ? 2 : 1;
+
+        // 3. Gọi Repository lấy giá
+        List<FieldPrice> prices = fieldPriceRepository.findActivePricesByDayType(fieldId, currentDayType);
+
+        // 4. Map sang DTO và trả về
+        return prices.stream()
+                .map(fieldPriceMapper::toFieldPriceResponse)
+                .toList();
     }
 }

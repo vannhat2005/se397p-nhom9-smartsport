@@ -9,7 +9,11 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/field-prices")
@@ -70,6 +74,16 @@ public class FieldPriceController {
         fieldPriceService.deleteFieldPrice(id);
         return ApiResponse.<Void>builder()
                 .message("Xóa bảng giá thành công.")
+                .build();
+    }
+
+    @GetMapping("/field/{fieldId}/daily-prices")
+    public ApiResponse<List<FieldPriceResponse>> getPricesByDate(
+            @PathVariable Integer fieldId
+    ) {
+        return ApiResponse.<List<FieldPriceResponse>>builder()
+                .message("Lấy danh sách giá theo ngày thành công.")
+                .data(fieldPriceService.getPricesByDate(fieldId))
                 .build();
     }
 }

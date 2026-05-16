@@ -112,17 +112,19 @@ public class FieldServiceImpl implements FieldService {
         // 1. Tìm thông tin sân
         Field field = fieldRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FIELD_NOT_FOUND));
+
+        // 2. Map sang DTO (Lúc này MapStruct tự động lôi cái URL ảnh hoàn chỉnh từ DB đắp sang DTO luôn)
         FieldResponse fieldResponse = fieldMapper.toFieldResponse(field);
 
-        // 2. Tìm danh sách giá của sân đó
+        // 3. Tìm danh sách giá của sân đó
         List<FieldPrice> prices = fieldPriceRepository.findAllPricesByFieldId(id);
 
-        // 3. Map từ List Entity sang List DTO
+        // 4. Map từ List Entity sang List DTO
         List<FieldPriceResponse> priceResponses = prices.stream()
                 .map(fieldPriceMapper::toFieldPriceResponse)
                 .toList();
 
-        // 4. Gói tất cả vào FieldDetailResponse và trả về
+        // 5. Gói tất cả vào FieldAndPriceResponse và trả về
         return FieldAndPriceResponse.builder()
                 .field_info(fieldResponse)
                 .prices(priceResponses)
