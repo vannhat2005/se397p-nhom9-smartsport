@@ -6,6 +6,11 @@
                 <h2>Quản lý người dùng</h2>
                 <p>Quản lý và phân quyền thành viên trong hệ thống SmartSport.</p>
             </div>
+
+            <button class="add-button" data-bs-toggle="modal" data-bs-target="#themNguoiDungModal">
+                <span class="material-symbols-outlined">add</span>
+                Thêm người dùng
+            </button>
         </div>
 
         <!-- Stats Bento Grid -->
@@ -17,7 +22,7 @@
 
                 <div>
                     <p>Tổng người dùng</p>
-                    <h3>{{ users.length }}</h3>
+                    <h3>{{ totalElements }}</h3>
 
                     <span class="trend green-text">
                         <span class="material-symbols-outlined">trending_up</span>
@@ -33,11 +38,11 @@
 
                 <div>
                     <p>Chủ sân hoạt động</p>
-                    <h3>{{ activeOwnerCount }}</h3>
+                    <h3>{{ 10 }}</h3>
 
                     <span class="trend blue-text">
                         <span class="material-symbols-outlined">verified</span>
-                        85% tỷ lệ xác thực
+                        Đang hoạt động
                     </span>
                 </div>
             </div>
@@ -48,11 +53,11 @@
                 </div>
 
                 <div>
-                    <p>Vận động viên mới</p>
-                    <h3>{{ newClientCount }}</h3>
+                    <p>Khách hàng</p>
+                    <h3>{{ 10 }}</h3>
 
                     <span class="trend indigo-text">
-                        Tuần này
+                        Trong trang hiện tại
                     </span>
                 </div>
             </div>
@@ -62,13 +67,6 @@
         <div class="table-card">
             <div class="table-header">
                 <h4>Danh sách thành viên</h4>
-
-                <div class="table-actions">
-                    <button class="filter-button">
-                        <span class="material-symbols-outlined">filter_list</span>
-                        Lọc
-                    </button>
-                </div>
             </div>
 
             <div class="table-wrapper">
@@ -88,14 +86,14 @@
                         <tr v-for="user in displayedUsers" :key="user.id">
                             <td>
                                 <div class="user-cell">
-                                    <img v-if="user.avatar" class="avatar" :src="user.avatar" :alt="user.fullName" />
+                                    <img v-if="user.avatar" class="avatar" :src="user.avatar" :alt="user.full_name" />
 
                                     <div v-else class="avatar-text">
-                                        {{ getAvatarText(user.fullName) }}
+                                        {{ getAvatarText(user.full_name) }}
                                     </div>
 
                                     <div>
-                                        <p class="user-name">{{ user.fullName }}</p>
+                                        <p class="user-name">{{ user.full_name }}</p>
                                         <p class="user-email">{{ user.email }}</p>
                                     </div>
                                 </div>
@@ -104,8 +102,8 @@
                             <td>{{ user.phone }}</td>
 
                             <td>
-                                <span class="role-badge" :class="user.role">
-                                    {{ getRoleText(user.role) }}
+                                <span class="role-badge" :class="getRoleClass(user.role_id)">
+                                    {{ getRoleText(user.role_id) }}
                                 </span>
                             </td>
 
@@ -113,8 +111,7 @@
                                 <div class="status-cell">
                                     <span class="status-dot" :class="{
                                         active: user.status === 1,
-                                        offline: user.status === 0,
-                                        locked: user.status === 2,
+                                        locked: user.status === 0,
                                     }"></span>
 
                                     <span class="status-text" :class="{ muted: user.status === 0 }">
@@ -123,13 +120,28 @@
                                 </div>
                             </td>
 
-                            <td>{{ user.joinDate }}</td>
-
+                            <td>{{ formatDate(user.created_at) }}</td>
                             <td class="text-right">
-                                <button class="edit-button" @click="editUser(user)">
+                                <button class="edit-button" data-bs-toggle="modal"
+                                    
+                                    @click="editUser()">
                                     <span class="material-symbols-outlined">edit</span>
                                     Sửa
                                 </button>
+                            </td>
+                            <!-- <td class="text-right">
+                                <button class="edit-button"  data-bs-toggle="modal"
+                                    data-bs-target="#capNhatNguoiDungModal"
+                                    @click="Object.assign(updateUser, { ...user, status: Number(user.status), role_id: Number(user.role_id) })">
+                                    <span class="material-symbols-outlined">edit</span>
+                                    Sửa
+                                </button>
+                            </td> -->
+                        </tr>
+
+                        <tr v-if="displayedUsers.length === 0">
+                            <td colspan="6" class="empty-row">
+                                Không có người dùng nào.
                             </td>
                         </tr>
                     </tbody>
@@ -139,8 +151,9 @@
             <!-- Footer phân trang -->
             <div class="table-footer">
                 <p>
-                    Hiển thị {{ startIndex + 1 }} - {{ endIndex }} trên
-                    {{ users.length }} người dùng
+                    Hiển thị
+                    {{ totalElements === 0 ? 0 : startIndex + 1 }} - {{ endIndex }}
+                    trên {{ totalElements }} người dùng
                 </p>
 
                 <div class="pagination">
@@ -159,165 +172,306 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal thêm người dùng -->
+        <div class="modal fade" id="themNguoiDungModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">
+                            Thêm mới người dùng
+                        </h1>
+
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Họ tên</label>
+                            <input v-model="createUser.full_name" type="text" class="form-control"
+                                placeholder="Nhập họ tên" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input v-model="createUser.email" type="email" class="form-control"
+                                placeholder="Nhập email" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Số điện thoại</label>
+                            <input v-model="createUser.phone" type="text" class="form-control"
+                                placeholder="Nhập số điện thoại" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Mật khẩu</label>
+                            <input v-model="createUser.password" type="password" class="form-control"
+                                placeholder="Nhập mật khẩu" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Địa chỉ</label>
+                            <input v-model="createUser.address" type="text" class="form-control"
+                                placeholder="Nhập địa chỉ" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Vai trò</label>
+                            <select v-model="createUser.role_id" class="form-select">
+                                <option value="">Chọn vai trò</option>
+                                <option :value="1">Admin</option>
+                                <option :value="2">Chủ sân</option>
+                                <option :value="3">Khách hàng</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Trạng thái</label>
+                            <select v-model="createUser.status" class="form-select">
+                                <option value="">Chọn trạng thái</option>
+                                <option :value="1">Hoạt động</option>
+                                <option :value="0">Bị khóa</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Hủy
+                        </button>
+
+                        <button type="button" class="btn btn-primary" @click="addUser" data-bs-dismiss="modal">
+                            Lưu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal cập nhật người dùng -->
+        <!-- <div class="modal fade" id="capNhatNguoiDungModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">
+                            Cập nhật người dùng
+                        </h1>
+
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Họ tên</label>
+                            <input v-model="updateUser.full_name" type="text" class="form-control"
+                                placeholder="Nhập họ tên" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input v-model="updateUser.email" type="email" class="form-control"
+                                placeholder="Nhập email" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Số điện thoại</label>
+                            <input v-model="updateUser.phone" type="text" class="form-control"
+                                placeholder="Nhập số điện thoại" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Địa chỉ</label>
+                            <input v-model="updateUser.address" type="text" class="form-control"
+                                placeholder="Nhập địa chỉ" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Vai trò</label>
+                            <select v-model="updateUser.role_id" class="form-select">
+                                <option value="">Chọn vai trò</option>
+                                <option :value="1">Admin</option>
+                                <option :value="2">Chủ sân</option>
+                                <option :value="3">Khách hàng</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Trạng thái</label>
+                            <select v-model="updateUser.status" class="form-select">
+                                <option value="">Chọn trạng thái</option>
+                                <option :value="1">Hoạt động</option>
+                                <option :value="0">Bị khóa</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Hủy
+                        </button>
+
+                        <button type="button" class="btn btn-primary" @click="editUser" data-bs-dismiss="modal">
+                            Lưu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div> --> -->
     </div>
 </template>
 
 <script>
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default {
     name: "QuanLyNguoiDung",
 
     data() {
         return {
             currentPage: 1,
-            perPage: 4,
+            pageSize: 4,
+            totalPages: 1,
+            totalElements: 0,
 
-            users: [
-                {
-                    id: 1,
-                    fullName: "Nguyễn Văn An",
-                    email: "an.nv@example.com",
-                    phone: "0987 654 321",
-                    role: "admin",
-                    status: 1,
-                    joinDate: "12/05/2023",
-                    avatar:
-                        "https://lh3.googleusercontent.com/aida-public/AB6AXuA0ZPBIeNwDbp_zMrCK5PV75NYT1srUvm5h6lL0F2ScIzFzNrwyfMQsfD7k2Df9x_1NCFRk6HbBK3CsQ6sXfH9WTtIgn1AAe6T-Vkh9riPx-6TmWhKclKTuFmhqSWFDU5khnEgH6TXR-CP92bS-ly1Cd2LV0Pth3qOqZNnFemepfpKDIzYNVG7mxst1o49eX9iaCffNKPaHIvAXygLWgKJb8usgwlR7VCIyvrIV-NE0lcP2i4DLaE1R3fxH1dg9rtgUsY5ShvgQSqY",
-                },
-                {
-                    id: 2,
-                    fullName: "Trần Thị Hoa",
-                    email: "hoa.tt@sports.vn",
-                    phone: "0912 345 678",
-                    role: "chu_san",
-                    status: 1,
-                    joinDate: "20/08/2023",
-                    avatar: "",
-                },
-                {
-                    id: 3,
-                    fullName: "Lê Hoàng Nam",
-                    email: "nam.lh@gmail.com",
-                    phone: "0345 678 901",
-                    role: "client",
-                    status: 0,
-                    joinDate: "15/11/2023",
-                    avatar:
-                        "https://lh3.googleusercontent.com/aida-public/AB6AXuAq7PP-JEhZj4rOqivj3a334Gbb4UgvhE-3nCOeK1jwlDRfp7_slwilSKX21OWxx_6U2XO7FlO5muwGISaPIjOcmpGJwciRV-sp9Pd3YnjgteTFJfVJXZ4ByoTrkqpWCOLr8AdevzcBDxf6u1ZUCEi5ks361_L67PX70U9QBo95bMVdnHgVHY7I6DDH1SZO_64s0At5kJudwf0R_q2eHkST0QkgIYmCynEXs5H4qkCDJp9yb5VENmr23_u4PKSpKkX9GajLqR4eKbw",
-                },
-                {
-                    id: 4,
-                    fullName: "Phạm Minh Anh",
-                    email: "anh.pm@outlook.com",
-                    phone: "0765 432 109",
-                    role: "client",
-                    status: 2,
-                    joinDate: "02/01/2024",
-                    avatar:
-                        "https://lh3.googleusercontent.com/aida-public/AB6AXuB6aan6WQf849ReLi8UTXmXuZbrBsjC6Kd1Waw50Is6f0WXD3o9GUiBOvN9IJa-WE9dJpgGvlqMFUoxYTiduOBqgCMtRM-RbTGOlaXhiqoUkMa8za-IHYhZzmVAyYJp7hpIBeSZ0-aWVeOK8O602pq3wy3T2wAXkuE-xwfMeNEBotT5klTXEyn43f0OrORPnkf2QvV9UGgRWxw9-C8w6EKjw9KXi-gYgqfqdH7fDwVDI_NVy49-DhY93Rk74D4wwQF_QbW2n-_jqDU",
-                },
-                {
-                    id: 5,
-                    fullName: "Hoàng Anh Tuấn",
-                    email: "tuanha@email.com",
-                    phone: "0944 444 444",
-                    role: "client",
-                    status: 1,
-                    joinDate: "05/02/2024",
-                    avatar: "",
-                },
-                {
-                    id: 6,
-                    fullName: "Đỗ Thị Mai",
-                    email: "maidt@email.com",
-                    phone: "0955 555 555",
-                    role: "client",
-                    status: 1,
-                    joinDate: "11/02/2024",
-                    avatar: "",
-                },
-                {
-                    id: 7,
-                    fullName: "Võ Quốc Huy",
-                    email: "huyvq@email.com",
-                    phone: "0966 666 666",
-                    role: "client",
-                    status: 1,
-                    joinDate: "18/02/2024",
-                    avatar: "",
-                },
-                {
-                    id: 8,
-                    fullName: "Bùi Ngọc Linh",
-                    email: "linhbn@email.com",
-                    phone: "0977 777 777",
-                    role: "client",
-                    status: 0,
-                    joinDate: "21/02/2024",
-                    avatar: "",
-                },
-                {
-                    id: 9,
-                    fullName: "Ngô Thanh Bình",
-                    email: "binhnt@email.com",
-                    phone: "0988 888 888",
-                    role: "chu_san",
-                    status: 1,
-                    joinDate: "02/03/2024",
-                    avatar: "",
-                },
-                {
-                    id: 10,
-                    fullName: "Trần Văn Chủ",
-                    email: "chusan1@email.com",
-                    phone: "0911 111 111",
-                    role: "chu_san",
-                    status: 1,
-                    joinDate: "08/03/2024",
-                    avatar: "",
-                },
-            ],
+            users: [],
+
+            createUser: {
+                full_name: "",
+                email: "",
+                phone: "",
+                password: "",
+                avatar: "",
+                address: "",
+                role_id: "",
+                status: "",
+            },
+
+            updateUser: {
+                id: "",
+                full_name: "",
+                email: "",
+                phone: "",
+                avatar: "",
+                address: "",
+                role_id: "",
+                status: "",
+            },
         };
     },
 
     computed: {
-        totalPages() {
-            return Math.ceil(this.users.length / this.perPage);
-        },
-
         startIndex() {
-            return (this.currentPage - 1) * this.perPage;
-        },
-
-        endIndex() {
-            const end = this.startIndex + this.displayedUsers.length;
-            return end;
+            return (this.currentPage - 1) * this.pageSize;
         },
 
         displayedUsers() {
-            const start = (this.currentPage - 1) * this.perPage;
-            const end = start + this.perPage;
+            return this.users;
+        },
 
-            return this.users.slice(start, end);
+        endIndex() {
+            return this.startIndex + this.displayedUsers.length;
         },
 
         activeOwnerCount() {
             return this.users.filter(
-                (user) => user.role === "chu_san" && user.status === 1
+                (user) => Number(user.role_id) === 2 && Number(user.status) === 1
             ).length;
         },
 
-        newClientCount() {
-            return this.users.filter((user) => user.role === "client").length;
+        clientCount() {
+            return this.users.filter((user) => Number(user.role_id) === 3).length;
         },
     },
 
+    mounted() {
+        this.loadUsers();
+    },
+
     methods: {
+        loadUsers() {
+            axios
+                .get(`${API_BASE_URL}/api/users`, {
+                    params: {
+                        page: this.currentPage,
+                        size: this.pageSize,
+                    },
+                })
+                .then((response) => {
+                    const pageData = response.data.data;
+
+                    this.users = pageData.data;
+
+                    this.currentPage = pageData.currentPage;
+                    this.pageSize = pageData.pageSize;
+                    this.totalPages = pageData.totalPages;
+                    this.totalElements = pageData.totalElements;
+                })
+                .catch((error) => {
+                    console.error("Lỗi khi tải danh sách người dùng:", error);
+                    alert("Không thể tải danh sách người dùng. Vui lòng thử lại sau.");
+                });
+        },
+
+        addUser() {
+            axios
+                .post(`${API_BASE_URL}/api/users`, this.createUser)
+                .then((response) => {
+                    this.$toast.success(response.data.message);
+
+                    this.createUser = {
+                        full_name: "",
+                        email: "",
+                        phone: "",
+                        password: "",
+                        avatar: "",
+                        address: "",
+                        role_id: "",
+                        status: "",
+                    };
+
+                    this.loadUsers();
+                })
+                .catch((error) => {
+                    console.error("Lỗi thêm người dùng:", error);
+                    this.$toast.error("Thêm người dùng thất bại. Vui lòng thử lại.");
+                });
+        },
+
+        editUser() {
+            alert("Phân quyền và khóa/mở tài khoản");
+            // const payload = {
+            //     id: this.updateUser.id,
+            //     role_id: Number(this.updateUser.role_id),
+            //     full_name: this.updateUser.full_name,
+            //     email: this.updateUser.email,
+            //     phone: this.updateUser.phone,
+            //     avatar: this.updateUser.avatar,
+            //     address: this.updateUser.address,
+            //     status: Number(this.updateUser.status),
+            // };
+
+            // axios
+            //     .put(`${API_BASE_URL}/api/users/${this.updateUser.id}`, payload)
+            //     .then((response) => {
+            //         this.$toast.success(response.data.message || "Cập nhật người dùng thành công.");
+            //         this.loadUsers();
+            //     })
+            //     .catch((error) => {
+            //         console.error("Lỗi cập nhật người dùng:", error);
+            //         this.$toast.error("Cập nhật người dùng thất bại. Vui lòng thử lại.");
+            //     });
+        },
+
         goToPage(page) {
             if (page < 1 || page > this.totalPages) {
                 return;
             }
 
             this.currentPage = page;
+            this.loadUsers();
         },
 
         prevPage() {
@@ -329,6 +483,10 @@ export default {
         },
 
         getAvatarText(name) {
+            if (!name) {
+                return "ND";
+            }
+
             return name
                 .split(" ")
                 .map((item) => item[0])
@@ -337,33 +495,46 @@ export default {
                 .toUpperCase();
         },
 
-        getRoleText(role) {
-            if (role === "admin") {
+        getRoleClass(roleId) {
+            if (Number(roleId) === 1) {
+                return "admin";
+            }
+
+            if (Number(roleId) === 2) {
+                return "chu_san";
+            }
+
+            return "client";
+        },
+
+        getRoleText(roleId) {
+            if (Number(roleId) === 1) {
                 return "Admin";
             }
 
-            if (role === "chu_san") {
+            if (Number(roleId) === 2) {
                 return "Chủ sân";
             }
 
-            return "Vận động viên";
+            return "Khách hàng";
         },
 
         getStatusText(status) {
-            if (status === 1) {
-                return "Hoạt động";
-            }
-
-            if (status === 0) {
-                return "Ngoại tuyến";
-            }
-
-            return "Đã khoá";
+            return Number(status) === 1 ? "Hoạt động" : "Bị khóa";
         },
 
-        editUser(user) {
-            console.log("Sửa người dùng:", user);
-            alert("Chức năng sửa người dùng sẽ xử lý sau.");
+        formatDate(dateString) {
+            if (!dateString) {
+                return "";
+            }
+
+            const date = new Date(dateString);
+
+            if (Number.isNaN(date.getTime())) {
+                return dateString;
+            }
+
+            return date.toLocaleDateString("vi-VN");
         },
     },
 };
@@ -398,6 +569,31 @@ export default {
     margin: 4px 0 0;
     color: #64748b;
     font-size: 16px;
+}
+
+.add-button {
+    border: none;
+    background: #22c55e;
+    color: #004b1e;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.add-button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.add-button .material-symbols-outlined {
+    font-size: 20px;
 }
 
 /* Stats */
@@ -513,29 +709,6 @@ export default {
     color: #191c1d;
 }
 
-.filter-button {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    color: #475569;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.filter-button:hover {
-    background: #f8fafc;
-}
-
-.filter-button .material-symbols-outlined {
-    font-size: 18px;
-}
-
 .table-wrapper {
     overflow-x: auto;
 }
@@ -575,6 +748,12 @@ tbody tr {
 
 tbody tr:hover {
     background: #f8fafc;
+}
+
+.empty-row {
+    text-align: center;
+    color: #94a3b8;
+    font-weight: 600;
 }
 
 .text-right {
@@ -658,10 +837,6 @@ tbody tr:hover {
 
 .status-dot.active {
     background: #22c55e;
-}
-
-.status-dot.offline {
-    background: #cbd5e1;
 }
 
 .status-dot.locked {
@@ -773,6 +948,12 @@ tbody tr:hover {
 }
 
 @media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
     .table-footer {
         flex-direction: column;
         align-items: flex-start;

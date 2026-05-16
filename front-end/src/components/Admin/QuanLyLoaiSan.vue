@@ -6,7 +6,7 @@
                 <h2>Quản lý loại sân</h2>
                 <p>Quản lý và cấu hình các loại hình thể thao trong hệ thống.</p>
             </div>
-            <button class="add-button" @click="addFieldType">
+            <button class="add-button" data-bs-toggle="modal" data-bs-target="#themModal">
                 <span class="material-symbols-outlined">add</span>
                 Thêm loại sân
             </button>
@@ -85,7 +85,7 @@
         <div class="table-card">
             <div class="table-header">
                 <div class="table-title">
-                    <span>Danh sách phân loại</span>                 
+                    <span>Danh sách phân loại</span>
                 </div>
             </div>
 
@@ -120,7 +120,8 @@
                             </td>
 
                             <td class="text-right">
-                                <button class="edit-button" @click="editFieldType(type)">
+                                <button class="edit-button" data-bs-toggle="modal" data-bs-target="#capNhatModal"
+                                    v-on:click="Object.assign(updateFieldType, type)">
                                     <span class="material-symbols-outlined">edit</span>
                                     Sửa
                                 </button>
@@ -157,6 +158,87 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal thêm loại sân -->
+    <div class="modal fade" id="themModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        Thêm mới loại sân
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tenLoaiSan" class="form-label">Tên loại sân</label>
+                        <input v-model="createFieldType.name" type="text" class="form-control" id="tenLoaiSan"
+                            placeholder="Nhập tên loại sân" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="mota" class="form-label">Mô tả</label>
+                        <input v-model="createFieldType.description" type="text" class="form-control" id="mota"
+                            placeholder="Nhập mô tả" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="isActive" class="form-label">Trạng thái</label>
+                        <select v-model="createFieldType.status" class="form-select" id="isActive">
+                            <option value="">Chọn trạng thái</option>
+                            <option value="1">Hoạt động</option>
+                            <option value="0">Ngưng hoạt động</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+                    <button type="button" class="btn btn-primary" @click="addFieldType"
+                        data-bs-dismiss="modal">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal cập nhật loại sân -->
+    <div class="modal fade" id="capNhatModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        Cập nhật loại sân
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tenLoaiSan" class="form-label">Tên loại sân</label>
+                        <input v-model="updateFieldType.name" type="text" class="form-control" id="tenLoaiSan"
+                            placeholder="Nhập tên loại sân" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="mota" class="form-label">Mô tả</label>
+                        <input v-model="updateFieldType.description" type="text" class="form-control" id="mota"
+                            placeholder="Nhập mô tả" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="isActive" class="form-label">Trạng thái</label>
+                        <select v-model="updateFieldType.status" class="form-select" id="isActive">
+                            <option value="">Chọn trạng thái</option>
+                            <option :value="1">Hoạt động</option>
+                            <option :value="0">Ngưng hoạt động</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+                    <button type="button" class="btn btn-primary" @click="editFieldType()"
+                        data-bs-dismiss="modal">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -182,6 +264,18 @@ export default {
 
             // Danh sách loại sân của trang hiện tại
             fieldTypes: [],
+            // Dữ liệu loại sân mới tạo
+            createFieldType: {
+                name: "",
+                description: "",
+                status: "",
+            },
+            updateFieldType: {
+                id: "",
+                name: "",
+                description: "",
+                status: "",
+            }
         };
     },
 
@@ -250,6 +344,34 @@ export default {
                     alert("Không thể tải danh sách loại sân. Vui lòng thử lại sau.");
                 });
         },
+        addFieldType() {
+            axios.post(`${API_BASE_URL}/api/field-types`, this.createFieldType)
+                .then((response) => {
+                    this.$toast.success(response.data.message);
+                    this.loadFieldTypes();
+                })
+                .catch((error) => {
+                    this.$toast.error("Thêm loại sân thất bại. Vui lòng thử lại.");
+                });
+        },
+        editFieldType() {
+            const payload = {
+                id: this.updateFieldType.id,
+                name: this.updateFieldType.name,
+                description: this.updateFieldType.description,
+                status: Number(this.updateFieldType.status),
+            }
+            axios.put(`${API_BASE_URL}/api/field-types/${this.updateFieldType.id}`, payload)
+                .then((response) => {
+                    this.$toast.success(response.data.message);
+                    this.loadFieldTypes();
+                })
+                .catch((error) => {
+                    this.$toast.error("Cập nhật loại sân thất bại. Vui lòng thử lại.");
+                });
+        },
+
+
         //Chuyển sang trang được chọn
         goToPage(page) {
             if (page < 1 || page > this.totalPages) {
@@ -286,10 +408,7 @@ export default {
             return "maintenance";
         },
 
-        editFieldType(type) {
-            console.log("Sửa loại sân:", type);
-            alert("Chức năng sửa loại sân sẽ xử lý sau.");
-        },
+
     },
 };
 </script>
