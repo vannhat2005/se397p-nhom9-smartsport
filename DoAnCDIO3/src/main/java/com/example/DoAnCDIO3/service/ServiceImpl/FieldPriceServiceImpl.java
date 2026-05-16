@@ -33,6 +33,7 @@ public class FieldPriceServiceImpl implements FieldPriceService {
     FieldPriceMapper fieldPriceMapper;
 
 
+
     @Override
     public FieldPriceResponse createFieldPrice(FieldPriceRequest request) {
         // 1. Validate thời gian cơ bản (Giờ kết thúc phải sau giờ bắt đầu)

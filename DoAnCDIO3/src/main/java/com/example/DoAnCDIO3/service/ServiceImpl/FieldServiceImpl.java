@@ -18,6 +18,7 @@ import com.example.DoAnCDIO3.repository.FieldPriceRepository;
 import com.example.DoAnCDIO3.repository.FieldRepository;
 import com.example.DoAnCDIO3.repository.FieldTypeRepository;
 import com.example.DoAnCDIO3.repository.UserRepository;
+import com.example.DoAnCDIO3.service.FieldPriceService;
 import com.example.DoAnCDIO3.service.FieldService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -42,6 +45,8 @@ public class FieldServiceImpl implements FieldService {
     FieldMapper fieldMapper;
     FieldPriceRepository fieldPriceRepository;
     FieldPriceMapper fieldPriceMapper;
+    FieldPriceService fieldPriceService;
+
 
     @Override
     public FieldResponse createField(Integer ownerId, FieldCreateRequest request) {
@@ -109,22 +114,20 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public FieldAndPriceResponse getFieldDetailWithPrices(Integer id) {
-        // 1. Tìm thông tin sân
+// 1. Tìm thông tin sân
         Field field = fieldRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FIELD_NOT_FOUND));
 
-        // 2. Map sang DTO (Lúc này MapStruct tự động lôi cái URL ảnh hoàn chỉnh từ DB đắp sang DTO luôn)
+        // 2. Map thông tin sân sang DTO
         FieldResponse fieldResponse = fieldMapper.toFieldResponse(field);
 
-        // 3. Tìm danh sách giá của sân đó
-        List<FieldPrice> prices = fieldPriceRepository.findAllPricesByFieldId(id);
+        // BỎ 2 DÒNG NÀY ĐI VÌ BÊN SERVICE KIA ĐÃ TỰ TÍNH RỒI NHÉ SẾP
+        // LocalDate today = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh"));
 
-        // 4. Map từ List Entity sang List DTO
-        List<FieldPriceResponse> priceResponses = prices.stream()
-                .map(fieldPriceMapper::toFieldPriceResponse)
-                .toList();
+        // 3. Gọi thẳng Service giá (Nó chỉ cần ID sân là tự biết hôm nay giá bao nhiêu)
+        List<FieldPriceResponse> priceResponses = fieldPriceService.getPricesByDate(id);
 
-        // 5. Gói tất cả vào FieldAndPriceResponse và trả về
+        // 4. Gói tất cả vào Response tổng và trả về
         return FieldAndPriceResponse.builder()
                 .field_info(fieldResponse)
                 .prices(priceResponses)
