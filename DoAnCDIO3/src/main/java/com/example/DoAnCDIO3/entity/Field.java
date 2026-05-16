@@ -43,6 +43,10 @@ public class Field {
     @Column(nullable = false)
     LocalTime close_time;
 
+
+    @Column(name = "image", length = 1000)
+    String image;
+
     @Column(nullable = false)
     Integer status;
 

@@ -29,4 +29,6 @@ public class FieldCreateRequest {
 
     @NotNull(message = "FIELD_TIME_NOT_NULL")
     LocalTime close_time;
+
+    String image;
 }

@@ -5,6 +5,9 @@ import com.example.DoAnCDIO3.dto.PageResponse;
 import com.example.DoAnCDIO3.dto.request.FieldPriceRequest;
 import com.example.DoAnCDIO3.dto.response.FieldPriceResponse;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public interface FieldPriceService {
     // 1. Tạo mới một mức giá cho sân
     FieldPriceResponse createFieldPrice(FieldPriceRequest request);
@@ -17,4 +20,6 @@ public interface FieldPriceService {
 
     // 4. Xóa một mức giá
     void deleteFieldPrice(Integer id);
+
+    List<FieldPriceResponse> getPricesByDate(Integer fieldId);
 }
