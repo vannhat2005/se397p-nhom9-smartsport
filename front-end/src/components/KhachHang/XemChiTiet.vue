@@ -329,8 +329,7 @@ export default {
             openTime: this.formatTime(data.open_time),
             closeTime: this.formatTime(data.close_time),
             status: data.status,
-            image:
-              "https://images.unsplash.com/photo-1459865264687-595d652de67e?q=80&w=1200",
+            image: data.image,
           };
         })
         .catch((error) => {
