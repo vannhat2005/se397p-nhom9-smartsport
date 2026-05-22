@@ -225,10 +225,7 @@ export default {
     },
 
     confirmPayment() {
-      if (!this.proofFileName) {
-        alert("Vui lòng tải ảnh minh chứng chuyển khoản.");
-        return;
-      }
+      
 
       const paymentPayload = {
         field_id: this.field.id,
@@ -246,8 +243,7 @@ export default {
         status: "pending_confirm",
       };
 
-      console.log("Dữ liệu thanh toán:", paymentPayload);
-      alert("Đã gửi minh chứng thanh toán. Kiểm tra console để xem dữ liệu.");
+      this.$router.push("/client/dat-san-thanh-cong");
     },
   },
 };

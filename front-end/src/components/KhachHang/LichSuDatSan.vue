@@ -150,10 +150,6 @@
                     <button class="cancel-button" @click="closeModal">
                         Đóng
                     </button>
-
-                    <button class="print-button">
-                        In hóa đơn
-                    </button>
                 </div>
             </div>
         </div>

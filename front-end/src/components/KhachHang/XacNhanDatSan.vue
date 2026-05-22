@@ -255,8 +255,7 @@ export default {
                 status: 1,
             };
 
-            console.log("Xác nhận đặt sân:", bookingPayload);
-            alert("Đặt sân thành công. Kiểm tra console để xem dữ liệu gửi lên API.");
+            this.$router.push("/client/thanh-toan");
         },
     },
 };

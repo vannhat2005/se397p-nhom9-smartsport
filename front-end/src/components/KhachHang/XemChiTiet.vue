@@ -43,7 +43,7 @@
             <div class="field-meta">
               <div>
                 <span class="material-symbols-outlined">stadium</span>
-                <strong>{{ fieldType.name }}</strong>
+                <strong>{{ field.field_type_name }}</strong>
               </div>
 
               <div>
@@ -175,6 +175,10 @@
 </template>
 
 <script>
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default {
   name: "ChiTietSan",
 
@@ -184,129 +188,55 @@ export default {
       bookingDate: "2026-05-06",
 
       field: {
-        id: 1,
-        userId: 2,
-        fieldTypeId: 1,
-        name: "Sân bóng đá Đại học Y",
-        address: "1 Tôn Thất Tùng, Đống Đa, Hà Nội",
-        description:
-          "Sân bóng đá chất lượng cao, mặt sân đẹp, hệ thống đèn chiếu sáng tốt, phù hợp cho luyện tập và thi đấu phong trào.",
-        openTime: "06:00",
-        closeTime: "23:00",
+        id: "",
+        owner_name: "",
+        field_type_name: "",
+        name: "",
+        address: "",
+        description: "",
+        openTime: "",
+        closeTime: "",
         status: 1,
         image:
-          "https://lh3.googleusercontent.com/aida-public/AB6AXuANOKmqYm270OK_PCslBdJvj-0kWoHtISkuBVDtYHGJMbORW6KRmz2vT29m4DodR7RzIfFPQC_GLnZyPtdVg3rvi5umRlIaM6EXXruAI2yTOYX-WFVlmg9wfRTxWjMV9rZ6gekf-yhZozqeDY8U12NsbTSDpN4tzG-eGxMvzS3yWVbfv70eQ4L42MW7qRSzSiLJ6ZDnbdAPtMX6ey_3gyYh2HAoYag8Nwhqg5aOZ0c7Yr8-ngnVHMDlsrTmFjarOmEMfvWxPAYT5JE",
+          "https://images.unsplash.com/photo-1459865264687-595d652de67e?q=80&w=1200",
       },
 
-      fieldType: {
-        id: 1,
-        name: "Bóng đá",
-        description: "Sân bóng đá mini",
-        status: 1,
-      },
-
-      fieldPrices: [
-        {
-          id: 1,
-          fieldId: 1,
-          dayType: 1,
-          startTime: "06:00",
-          endTime: "12:00",
-          price: 120000,
-          status: 1,
-        },
-        {
-          id: 2,
-          fieldId: 1,
-          dayType: 1,
-          startTime: "12:00",
-          endTime: "18:00",
-          price: 150000,
-          status: 1,
-        },
-        {
-          id: 3,
-          fieldId: 1,
-          dayType: 1,
-          startTime: "18:00",
-          endTime: "23:00",
-          price: 180000,
-          status: 1,
-        },
-      ],
+      fieldPrices: [],
 
       /*
-        Đây mới là dữ liệu đúng của bảng field_schedules trong database.
+        Tạm thời để mảng rỗng.
+        Sau này có API lịch sân thì gọi API rồi gán vào đây.
 
-        Chỉ lưu những khung giờ đã phát sinh dữ liệu:
-        - status = 1: Đã đặt
-        - status = 2: Đang giữ chỗ
+        Quy ước database:
+        field_schedules.status = 1: Đã đặt
+        field_schedules.status = 2: Đang giữ chỗ
 
-        Không lưu các giờ trống.
-        Frontend sẽ tự sinh giờ trống từ field.openTime đến field.closeTime.
+        Quy đổi sang giao diện cũ:
+        UI status = 1: Trống
+        UI status = 2: Đã đặt
+        UI status = 0: Khóa
       */
-      fieldScheduleDatabases: [
-        {
-          id: 1,
-          fieldId: 1,
-          bookingId: 15,
-          scheduleDate: "2026-05-06",
-          startTime: "08:00",
-          endTime: "09:00",
-          status: 1,
-        },
-        {
-          id: 2,
-          fieldId: 1,
-          bookingId: 16,
-          scheduleDate: "2026-05-06",
-          startTime: "12:00",
-          endTime: "13:00",
-          status: 2,
-        },
-        {
-          id: 3,
-          fieldId: 1,
-          bookingId: 17,
-          scheduleDate: "2026-05-06",
-          startTime: "15:00",
-          endTime: "16:00",
-          status: 1,
-        },
-        {
-          id: 4,
-          fieldId: 1,
-          bookingId: 18,
-          scheduleDate: "2026-05-06",
-          startTime: "17:00",
-          endTime: "18:00",
-          status: 2,
-        },
-        {
-          id: 5,
-          fieldId: 1,
-          bookingId: 19,
-          scheduleDate: "2026-05-06",
-          startTime: "19:00",
-          endTime: "20:00",
-          status: 1,
-        },
-      ],
+      fieldScheduleDatabases: [],
 
-      selectedSlotIds: [4, 5],
+      selectedSlotIds: [],
     };
   },
 
   computed: {
-    /*
-      fieldSchedules dùng cho giao diện cũ.
+    currentDayType() {
+      const date = new Date(this.bookingDate);
+      const day = date.getDay();
 
-      Quy đổi để KHÔNG đổi giao diện:
-      - Không có trong DB => status = 1 => Trống
-      - DB status = 1 => UI status = 2 => Đã đặt
-      - DB status = 2 => UI status = 0 => Khóa
-    */
+      // 0 = Chủ nhật, 6 = Thứ bảy
+      // Database: 0 = Ngày thường, 1 = Cuối tuần
+      return day === 0 || day === 6 ? 1 : 0;
+    },
+
     fieldSchedules() {
+      if (!this.field.openTime || !this.field.closeTime) {
+        return [];
+      }
+
       const slots = [];
       const openMinutes = this.timeToMinutes(this.field.openTime);
       const closeMinutes = this.timeToMinutes(this.field.closeTime);
@@ -377,8 +307,79 @@ export default {
     },
   },
 
+  mounted() {
+    this.loadFieldDetail();
+    this.loadFieldPrices();
+  },
+
   methods: {
+    loadFieldDetail() {
+      axios
+        .get(`${API_BASE_URL}/api/fields/${this.id_field}/details`)
+        .then((response) => {
+          const data = response.data.data.field_info;
+
+          this.field = {
+            id: data.id,
+            owner_name: data.owner_name,
+            field_type_name: data.field_type_name,
+            name: data.name,
+            address: data.address,
+            description: data.description,
+            openTime: this.formatTime(data.open_time),
+            closeTime: this.formatTime(data.close_time),
+            status: data.status,
+            image: data.image,
+          };
+        })
+        .catch((error) => {
+          console.error("Lỗi khi tải chi tiết sân:", error);
+          alert("Không thể tải thông tin sân.");
+          this.$router.push("/");
+        });
+    },
+
+    loadFieldPrices() {
+      axios
+        .get(`${API_BASE_URL}/api/field-prices/field/${this.id_field}`, {
+          params: {
+            page: 1,
+            size: 10,
+          },
+        })
+        .then((response) => {
+          const pageData = response.data.data;
+
+          this.fieldPrices = pageData.data.map((item) => ({
+            id: item.id,
+            fieldId: item.field_id,
+            fieldName: item.field_name,
+            dayType: item.day_type,
+            startTime: this.formatTime(item.start_time),
+            endTime: this.formatTime(item.end_time),
+            price: Number(item.price),
+            status: item.status,
+          }));
+        })
+        .catch((error) => {
+          console.error("Lỗi khi tải bảng giá sân:", error);
+          this.fieldPrices = [];
+        });
+    },
+
+    formatTime(time) {
+      if (!time) {
+        return "";
+      }
+
+      return String(time).slice(0, 5);
+    },
+
     timeToMinutes(time) {
+      if (!time) {
+        return 0;
+      }
+
       const [hour, minute] = time.split(":").map(Number);
       return hour * 60 + minute;
     },
@@ -423,11 +424,15 @@ export default {
 
     getPriceByTime(startTime, endTime) {
       const priceRule = this.fieldPrices.find((price) => {
-        if (price.fieldId !== this.field.id) {
+        if (price.fieldId !== Number(this.field.id)) {
           return false;
         }
 
         if (price.status !== 1) {
+          return false;
+        }
+
+        if (price.dayType !== this.currentDayType) {
           return false;
         }
 
@@ -443,7 +448,7 @@ export default {
     },
 
     formatCurrency(value) {
-      return new Intl.NumberFormat("vi-VN").format(value) + "đ";
+      return new Intl.NumberFormat("vi-VN").format(Number(value || 0)) + "đ";
     },
 
     formatShortPrice(value) {
@@ -451,7 +456,7 @@ export default {
         return "-";
       }
 
-      return `${Math.round(value / 1000)}k`;
+      return `${Math.round(Number(value) / 1000)}k`;
     },
 
     isSelected(slot) {
@@ -489,15 +494,26 @@ export default {
     },
 
     getPriceBlock(slot) {
-      if (slot.price === 120000) {
-        return "Khung sáng";
+      const priceRule = this.fieldPrices.find((price) => {
+        if (price.fieldId !== Number(this.field.id)) {
+          return false;
+        }
+
+        if (price.dayType !== this.currentDayType) {
+          return false;
+        }
+
+        return (
+          this.timeToMinutes(slot.startTime) >= this.timeToMinutes(price.startTime) &&
+          this.timeToMinutes(slot.endTime) <= this.timeToMinutes(price.endTime)
+        );
+      });
+
+      if (!priceRule) {
+        return "Khung giờ";
       }
 
-      if (slot.price === 150000) {
-        return "Khung chiều";
-      }
-
-      return "Khung tối";
+      return `${priceRule.startTime} - ${priceRule.endTime}`;
     },
 
     handleBooking() {
@@ -509,14 +525,6 @@ export default {
       const bookingPayload = {
         field_id: this.field.id,
         booking_date: this.bookingDate,
-
-        /*
-          Khi khách bấm đặt:
-          - bookings.status = 0: Chờ xác nhận
-          - field_schedules.status = 2: Đang giữ chỗ
-
-          Giao diện cũ sẽ quy đổi field_schedules.status = 2 thành slot Khóa.
-        */
         booking_status: 0,
         field_schedule_status: 2,
 
@@ -529,8 +537,9 @@ export default {
         total_amount: this.totalAmount,
       };
 
-      console.log("Dữ liệu đặt sân:", bookingPayload);
-      alert("Đã chọn đặt sân. Kiểm tra console để xem dữ liệu gửi lên API.");
+      localStorage.setItem("pendingBooking", JSON.stringify(bookingPayload));
+
+      this.$router.push("/client/xac-nhan-dat-san");
     },
   },
 };
