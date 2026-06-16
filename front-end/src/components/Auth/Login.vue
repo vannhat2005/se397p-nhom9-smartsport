@@ -85,7 +85,7 @@
           <div class="register-text">
             <p>
               Chưa có tài khoản?
-              <router-link to="/register">Đăng ký</router-link>
+              <router-link to="/auth/register">Đăng ký</router-link>
             </p>
           </div>
         </div>

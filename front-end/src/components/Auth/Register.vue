@@ -117,7 +117,7 @@
 
                     <p class="login-text">
                         Đã có tài khoản?
-                        <router-link to="/login">Đăng nhập</router-link>
+                        <router-link to="/auth/login">Đăng nhập</router-link>
                     </p>
                 </section>
             </div>

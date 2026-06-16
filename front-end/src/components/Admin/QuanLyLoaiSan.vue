@@ -6,6 +6,10 @@
                 <h2>Quản lý loại sân</h2>
                 <p>Quản lý và cấu hình các loại hình thể thao trong hệ thống.</p>
             </div>
+            <button class="add-button" data-bs-toggle="modal" data-bs-target="#themModal">
+                <span class="material-symbols-outlined">add</span>
+                Thêm loại sân
+            </button>
         </div>
 
         <!-- Dashboard Stats Preview -->
@@ -19,7 +23,7 @@
                     </div>
                 </div>
 
-                <h3>{{ fieldTypes.length }}</h3>
+                <h3>{{ totalElements }}</h3>
 
                 <p class="trend green-text">
                     <span class="material-symbols-outlined">trending_up</span>
@@ -82,23 +86,6 @@
             <div class="table-header">
                 <div class="table-title">
                     <span>Danh sách phân loại</span>
-
-                    <div class="divider"></div>
-
-                    <div class="filter-label">
-                        <span class="material-symbols-outlined">filter_list</span>
-                        Bộ lọc
-                    </div>
-                </div>
-
-                <div class="table-actions">
-                    <button>
-                        <span class="material-symbols-outlined">download</span>
-                    </button>
-
-                    <button>
-                        <span class="material-symbols-outlined">more_vert</span>
-                    </button>
                 </div>
             </div>
 
@@ -115,7 +102,7 @@
 
                     <tbody>
                         <tr v-for="type in displayedFieldTypes" :key="type.id">
-                            <td class="type-code">{{ type.code }}</td>
+                            <td class="type-code">{{ type.id }}</td>
 
                             <td>
                                 <div class="type-cell">
@@ -127,13 +114,14 @@
                             </td>
 
                             <td>
-                                <span class="status-badge" :class="type.status === 1 ? 'active' : 'maintenance'">
-                                    {{ type.status === 1 ? "HOẠT ĐỘNG" : "BẢO TRÌ" }}
+                                <span class="status-badge" :class="getStatusClass(type.status)">
+                                    {{ getStatusText(type.status) }}
                                 </span>
                             </td>
 
                             <td class="text-right">
-                                <button class="edit-button" @click="editFieldType(type)">
+                                <button class="edit-button" data-bs-toggle="modal" data-bs-target="#capNhatModal"
+                                    v-on:click="Object.assign(updateFieldType, type)">
                                     <span class="material-symbols-outlined">edit</span>
                                     Sửa
                                 </button>
@@ -147,9 +135,9 @@
             <div class="table-footer">
                 <div>
                     Hiển thị
-                    <span>{{ startIndex + 1 }} - {{ endIndex }}</span>
+                    <span>{{ totalElements === 0 ? 0 : startIndex + 1 }} - {{ endIndex }}</span>
                     trên
-                    <span>{{ fieldTypes.length }}</span>
+                    <span>{{ totalElements }}</span>
                     kết quả
                 </div>
 
@@ -170,120 +158,134 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal thêm loại sân -->
+    <div class="modal fade" id="themModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        Thêm mới loại sân
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tenLoaiSan" class="form-label">Tên loại sân</label>
+                        <input v-model="createFieldType.name" type="text" class="form-control" id="tenLoaiSan"
+                            placeholder="Nhập tên loại sân" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="mota" class="form-label">Mô tả</label>
+                        <input v-model="createFieldType.description" type="text" class="form-control" id="mota"
+                            placeholder="Nhập mô tả" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="isActive" class="form-label">Trạng thái</label>
+                        <select v-model="createFieldType.status" class="form-select" id="isActive">
+                            <option value="">Chọn trạng thái</option>
+                            <option value="1">Hoạt động</option>
+                            <option value="0">Ngưng hoạt động</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+                    <button type="button" class="btn btn-primary" @click="addFieldType"
+                        data-bs-dismiss="modal">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal cập nhật loại sân -->
+    <div class="modal fade" id="capNhatModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        Cập nhật loại sân
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tenLoaiSan" class="form-label">Tên loại sân</label>
+                        <input v-model="updateFieldType.name" type="text" class="form-control" id="tenLoaiSan"
+                            placeholder="Nhập tên loại sân" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="mota" class="form-label">Mô tả</label>
+                        <input v-model="updateFieldType.description" type="text" class="form-control" id="mota"
+                            placeholder="Nhập mô tả" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="isActive" class="form-label">Trạng thái</label>
+                        <select v-model="updateFieldType.status" class="form-select" id="isActive">
+                            <option value="">Chọn trạng thái</option>
+                            <option :value="1">Hoạt động</option>
+                            <option :value="0">Ngưng hoạt động</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+                    <button type="button" class="btn btn-primary" @click="editFieldType()"
+                        data-bs-dismiss="modal">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default {
     name: "QuanLyLoaiSan",
 
     data() {
         return {
+            // Trang hiện tại đang xem
             currentPage: 1,
-            perPage: 4,
 
-            fieldTypes: [
-                {
-                    id: 1,
-                    code: "#FT-001",
-                    name: "Bóng đá 7 người",
-                    description: "Cỏ nhân tạo chuẩn FIFA",
-                    status: 1,
-                },
-                {
-                    id: 2,
-                    code: "#BT-002",
-                    name: "Cầu lông",
-                    description: "Thảm chuyên dụng Victor",
-                    status: 1,
-                },
-                {
-                    id: 3,
-                    code: "#TN-003",
-                    name: "Tennis",
-                    description: "Sân cứng tiêu chuẩn Úc",
-                    status: 0,
-                },
-                {
-                    id: 4,
-                    code: "#PB-004",
-                    name: "Pickleball",
-                    description: "Xu hướng thể thao mới",
-                    status: 1,
-                },
-                {
-                    id: 5,
-                    code: "#BB-005",
-                    name: "Bóng rổ",
-                    description: "Sân bóng rổ ngoài trời",
-                    status: 1,
-                },
-                {
-                    id: 6,
-                    code: "#VB-006",
-                    name: "Bóng chuyền",
-                    description: "Sân bóng chuyền tiêu chuẩn",
-                    status: 1,
-                },
-                {
-                    id: 7,
-                    code: "#FT-007",
-                    name: "Bóng đá 5 người",
-                    description: "Sân mini cỏ nhân tạo",
-                    status: 1,
-                },
-                {
-                    id: 8,
-                    code: "#BD-008",
-                    name: "Cầu lông đôi",
-                    description: "Sân trong nhà ánh sáng tốt",
-                    status: 1,
-                },
-                {
-                    id: 9,
-                    code: "#FS-009",
-                    name: "Futsal",
-                    description: "Sân trong nhà tiêu chuẩn",
-                    status: 1,
-                },
-                {
-                    id: 10,
-                    code: "#GY-010",
-                    name: "Gym",
-                    description: "Không gian tập luyện đa năng",
-                    status: 0,
-                },
-                {
-                    id: 11,
-                    code: "#SW-011",
-                    name: "Bơi lội",
-                    description: "Hồ bơi tiêu chuẩn",
-                    status: 1,
-                },
-                {
-                    id: 12,
-                    code: "#TT-012",
-                    name: "Bóng bàn",
-                    description: "Bàn thi đấu trong nhà",
-                    status: 1,
-                },
-            ],
+            // Số loại sân mỗi trang
+            pageSize: 4,
+
+            // Tổng số trang backend trả về
+            totalPages: 1,
+
+            // Tổng số loại sân trong database
+            totalElements: 0,
+
+            // Danh sách loại sân của trang hiện tại
+            fieldTypes: [],
+            // Dữ liệu loại sân mới tạo
+            createFieldType: {
+                name: "",
+                description: "",
+                status: "",
+            },
+            updateFieldType: {
+                id: "",
+                name: "",
+                description: "",
+                status: "",
+            }
         };
     },
 
     computed: {
-        totalPages() {
-            return Math.ceil(this.fieldTypes.length / this.perPage);
-        },
-
         startIndex() {
-            return (this.currentPage - 1) * this.perPage;
+            return (this.currentPage - 1) * this.pageSize;
         },
 
         displayedFieldTypes() {
-            const start = this.startIndex;
-            const end = start + this.perPage;
-
-            return this.fieldTypes.slice(start, end);
+            return this.fieldTypes;
         },
 
         endIndex() {
@@ -295,31 +297,118 @@ export default {
         },
 
         activePercent() {
+            if (this.fieldTypes.length === 0) {
+                return 0;
+            }
+
             return Math.round((this.activeCount / this.fieldTypes.length) * 100);
         },
     },
+    mounted() {
+        this.loadFieldTypes();
+    },
 
     methods: {
+        // Hàm gọi API để lấy danh sách loại sân
+        loadFieldTypes() {
+            axios
+                .get(`${API_BASE_URL}/api/field-types`, {
+                    params: {
+                        // Gửi page lên backend
+                        page: this.currentPage,
+
+                        // Gửi size lên backend
+                        size: this.pageSize,
+                    },
+                })
+                .then((response) => {
+                    const pageData = response.data.data;
+
+                    // Danh sách loại sân
+                    this.fieldTypes = pageData.data;
+
+                    // Trang hiện tại
+                    this.currentPage = pageData.currentPage;
+
+                    // Số dòng mỗi trang
+                    this.pageSize = pageData.pageSize;
+
+                    // Tổng số trang
+                    this.totalPages = pageData.totalPages;
+
+                    // Tổng số loại sân trong database
+                    this.totalElements = pageData.totalElements;
+                })
+                .catch((error) => {
+                    console.error("Lỗi khi tải loại sân:", error);
+                    alert("Không thể tải danh sách loại sân. Vui lòng thử lại sau.");
+                });
+        },
+        addFieldType() {
+            axios.post(`${API_BASE_URL}/api/field-types`, this.createFieldType)
+                .then((response) => {
+                    this.$toast.success(response.data.message);
+                    this.loadFieldTypes();
+                })
+                .catch((error) => {
+                    this.$toast.error("Thêm loại sân thất bại. Vui lòng thử lại.");
+                });
+        },
+        editFieldType() {
+            const payload = {
+                id: this.updateFieldType.id,
+                name: this.updateFieldType.name,
+                description: this.updateFieldType.description,
+                status: Number(this.updateFieldType.status),
+            }
+            axios.put(`${API_BASE_URL}/api/field-types/${this.updateFieldType.id}`, payload)
+                .then((response) => {
+                    this.$toast.success(response.data.message);
+                    this.loadFieldTypes();
+                })
+                .catch((error) => {
+                    this.$toast.error("Cập nhật loại sân thất bại. Vui lòng thử lại.");
+                });
+        },
+
+
+        //Chuyển sang trang được chọn
         goToPage(page) {
             if (page < 1 || page > this.totalPages) {
                 return;
             }
 
             this.currentPage = page;
+            this.loadFieldTypes();
         },
-
+        // Quay về trang trước
         prevPage() {
             this.goToPage(this.currentPage - 1);
         },
-
+        // Chuyển sang trang tiếp theo
         nextPage() {
             this.goToPage(this.currentPage + 1);
         },
 
-        editFieldType(type) {
-            console.log("Sửa loại sân:", type);
-            alert("Chức năng sửa loại sân sẽ xử lý sau.");
+        // Hiển thị chữ trạng thái
+        getStatusText(status) {
+            if (status === 1) {
+                return "HOẠT ĐỘNG";
+            }
+
+            return "NGỪNG HOẠT ĐỘNG";
         },
+
+        // Hiển thị class CSS theo trạng thái
+        getStatusClass(status) {
+            if (status === 1) {
+                return "active";
+            }
+
+            return "maintenance";
+        },
+
+
     },
 };
 </script>
@@ -354,6 +443,31 @@ export default {
     color: #555f6f;
     font-size: 14px;
     line-height: 20px;
+}
+
+.add-button {
+    border: none;
+    background: #22c55e;
+    color: #004b1e;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.add-button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.add-button .material-symbols-outlined {
+    font-size: 20px;
 }
 
 /* Stats */
@@ -472,43 +586,6 @@ export default {
     color: #191c1d;
     font-size: 14px;
     font-weight: 600;
-}
-
-.divider {
-    width: 1px;
-    height: 16px;
-    background: #cbd5e1;
-}
-
-.filter-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #64748b;
-    font-size: 14px;
-}
-
-.filter-label .material-symbols-outlined {
-    font-size: 18px;
-}
-
-.table-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.table-actions button {
-    border: none;
-    background: transparent;
-    color: #94a3b8;
-    padding: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.table-actions button:hover {
-    color: #006e2f;
 }
 
 .table-wrapper {

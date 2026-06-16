@@ -1,6 +1,6 @@
 package com.example.DoAnCDIO3.enums;
 
-public enum FieldEnum {
+public enum BookingEnum {
     PENDING(0),
 
     ACTIVE(1),
@@ -9,7 +9,7 @@ public enum FieldEnum {
 
     private final int value;
 
-    FieldEnum(int value) {
+    BookingEnum(int value) {
         this.value = value;
     }
 

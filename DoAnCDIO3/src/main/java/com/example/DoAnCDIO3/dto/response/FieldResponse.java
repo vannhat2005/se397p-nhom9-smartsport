@@ -19,5 +19,6 @@ public class FieldResponse {
     String description;
     LocalTime open_time;
     LocalTime close_time;
+    String image;
     Integer status;
 }

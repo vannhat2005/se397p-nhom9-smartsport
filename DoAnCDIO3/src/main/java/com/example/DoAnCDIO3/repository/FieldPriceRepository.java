@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -26,4 +27,16 @@ public interface FieldPriceRepository extends JpaRepository<FieldPrice,Integer> 
             @Param("dayType") Integer dayType,
             @Param("time") LocalTime time
     );
+
+    // Lấy toàn bộ danh sách giá của 1 sân (không phân trang)
+    @Query("SELECT fp FROM FieldPrice fp WHERE fp.field_id.id = :fieldId")
+    List<FieldPrice> findAllPricesByFieldId(@Param("fieldId") Integer fieldId);
+
+    // Lấy danh sách khung giờ & giá tiền theo Loại ngày (1: Ngày thường, 2: Cuối tuần)
+    @Query("SELECT fp FROM FieldPrice fp WHERE fp.field_id.id = :fieldId AND fp.day_type = :dayType AND fp.status = 1")
+    List<FieldPrice> findActivePricesByDayType(
+            @Param("fieldId") Integer fieldId,
+            @Param("dayType") Integer dayType
+    );
+
 }

@@ -11,36 +11,59 @@ import com.example.DoAnCDIO3.mapper.FieldPriceMapper;
 import com.example.DoAnCDIO3.repository.FieldPriceRepository;
 import com.example.DoAnCDIO3.repository.FieldRepository;
 import com.example.DoAnCDIO3.service.FieldPriceService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
-
+@Service
+@Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@RequiredArgsConstructor
 public class FieldPriceServiceImpl implements FieldPriceService {
     FieldPriceRepository fieldPriceRepository;
     FieldRepository fieldRepository;
     FieldPriceMapper fieldPriceMapper;
 
 
+
     @Override
     public FieldPriceResponse createFieldPrice(FieldPriceRequest request) {
-        // 1. Validate thời gian
+        // 1. Validate thời gian cơ bản (Giờ kết thúc phải sau giờ bắt đầu)
         if (!request.getEnd_time().isAfter(request.getStart_time())) {
             throw new AppException(ErrorCode.PRICE_TIME_INVALID);
         }
 
-        // 2. Tìm sân bóng
+        // 2. Tìm sân bóng (Tìm trước để lấy được giờ hoạt động của sân)
         Field field = fieldRepository.findById(request.getField_id())
                 .orElseThrow(() -> new AppException(ErrorCode.FIELD_NOT_FOUND));
 
-        // 3. Dùng Mapper chuyển từ Request sang Entity chỉ trong 1 nốt nhạc
-        FieldPrice fieldPrice = fieldPriceMapper.toFieldPrice(request);
-        fieldPrice.setField_id(field); // Set thủ công thuộc tính Field vì Mapper đang ignore
+        // 3. LOGIC MỚI: Kiểm tra thời gian setup giá phải nằm trong giờ mở/đóng cửa của sân
+        // Giả sử bảng Field của sếp có 2 biến là open_time và close_time
+        if (request.getStart_time().isBefore(field.getOpen_time()) ||
+                request.getEnd_time().isAfter(field.getClose_time())) {
 
-        // 4. Lưu vào Database
+            // Sếp nhớ thêm mã lỗi này vào enum ErrorCode nhé (VD: "Thời gian giá tiền vượt quá giờ hoạt động của sân!")
+            throw new AppException(ErrorCode.PRICE_TIME_OUT_OF_BOUNDS);
+        }
+
+        // 4. Dùng Mapper chuyển từ Request sang Entity
+        FieldPrice fieldPrice = fieldPriceMapper.toFieldPrice(request);
+
+        // Lưu ý: Hôm trước chúng ta đã thống nhất đổi tên biến trong Entity thành 'field' rồi nhé
+        fieldPrice.setField_id(field);
+
+        // 5. Lưu vào Database
         FieldPrice savedFieldPrice = fieldPriceRepository.save(fieldPrice);
 
-        // 5. Dùng Mapper trả về Response
+        // 6. Dùng Mapper trả về Response
         return fieldPriceMapper.toFieldPriceResponse(savedFieldPrice);
     }
 
@@ -99,5 +122,30 @@ public class FieldPriceServiceImpl implements FieldPriceService {
     @Override
     public void deleteFieldPrice(Integer id) {
 
+    }
+
+    @Override
+    public List<FieldPriceResponse> getPricesByDate(Integer fieldId) {
+        // [NÂNG CẤP 1]: Kiểm tra sân tồn tại
+        if (!fieldRepository.existsById(fieldId)) {
+            throw new AppException(ErrorCode.FIELD_NOT_FOUND);
+        }
+
+        // [NÂNG CẤP 2]: Tự động lấy ngày hôm nay theo chuẩn múi giờ Việt Nam (Tránh lỗi lệch giờ khi deploy server)
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+
+        // 1. Phân tích xem HÔM NAY là thứ mấy
+        DayOfWeek dayOfWeek = today.getDayOfWeek();
+
+        // 2. Phân loại: T7, CN thì dayType = 2 (Cuối tuần). Các ngày còn lại (T2->T6) dayType = 1 (Ngày thường)
+        int currentDayType = (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) ? 2 : 1;
+
+        // 3. Gọi Repository lấy giá
+        List<FieldPrice> prices = fieldPriceRepository.findActivePricesByDayType(fieldId, currentDayType);
+
+        // 4. Map sang DTO và trả về
+        return prices.stream()
+                .map(fieldPriceMapper::toFieldPriceResponse)
+                .toList();
     }
 }

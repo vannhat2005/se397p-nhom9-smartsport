@@ -8,5 +8,9 @@ import com.example.DoAnCDIO3.dto.response.BookingResponse;
 public interface BookingService {
     public BookingResponse createBooking(Integer customerId, BookingCreateRequest request);
 
-    public PageResponse<BookingResponse> getAllBookings(int page, int size);
+    PageResponse<BookingResponse> getBookingsByOwner(Integer ownerId, int page, int size);
+
+    BookingResponse processBooking(Integer bookingId, Integer ownerId, Integer status);
+
+    PageResponse<BookingResponse> getBookingsByCustomer(Integer customerId, int page, int size);
 }

@@ -2,17 +2,23 @@ package com.example.DoAnCDIO3.service.ServiceImpl;
 
 import com.example.DoAnCDIO3.dto.PageResponse;
 import com.example.DoAnCDIO3.dto.request.FieldCreateRequest;
+import com.example.DoAnCDIO3.dto.response.FieldAndPriceResponse;
+import com.example.DoAnCDIO3.dto.response.FieldPriceResponse;
 import com.example.DoAnCDIO3.dto.response.FieldResponse;
 import com.example.DoAnCDIO3.entity.Field;
+import com.example.DoAnCDIO3.entity.FieldPrice;
 import com.example.DoAnCDIO3.entity.FieldType;
 import com.example.DoAnCDIO3.entity.User;
 import com.example.DoAnCDIO3.enums.FieldEnum;
 import com.example.DoAnCDIO3.exception.AppException;
 import com.example.DoAnCDIO3.exception.ErrorCode;
 import com.example.DoAnCDIO3.mapper.FieldMapper;
+import com.example.DoAnCDIO3.mapper.FieldPriceMapper;
+import com.example.DoAnCDIO3.repository.FieldPriceRepository;
 import com.example.DoAnCDIO3.repository.FieldRepository;
 import com.example.DoAnCDIO3.repository.FieldTypeRepository;
 import com.example.DoAnCDIO3.repository.UserRepository;
+import com.example.DoAnCDIO3.service.FieldPriceService;
 import com.example.DoAnCDIO3.service.FieldService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +29,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -35,6 +43,10 @@ public class FieldServiceImpl implements FieldService {
     UserRepository userRepository;
     FieldTypeRepository fieldTypeRepository;
     FieldMapper fieldMapper;
+    FieldPriceRepository fieldPriceRepository;
+    FieldPriceMapper fieldPriceMapper;
+    FieldPriceService fieldPriceService;
+
 
     @Override
     public FieldResponse createField(Integer ownerId, FieldCreateRequest request) {
@@ -80,11 +92,48 @@ public class FieldServiceImpl implements FieldService {
         return buildPageResponse(pageData, page);
     }
 
+    @Override
+    public FieldResponse approveOrRejectField(Integer id, boolean isApproved) {
+        // 1. Tìm sân trong Database
+        Field field = fieldRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.FIELD_NOT_FOUND));
+
+        // 2. Cập nhật trạng thái dựa trên quyết định của Admin
+        if (isApproved) {
+            field.setStatus(FieldEnum.ACTIVE.getValue()); // Giả sử 1 là ACTIVE (Đã duyệt)
+            // TODO: (Tùy chọn) Gửi email hoặc thông báo cho chủ sân là sân đã được duyệt
+        } else {
+            field.setStatus(FieldEnum.INACTIVE.getValue()); // Giả sử 2 là REJECTED (Từ chối duyệt)
+            // TODO: (Tùy chọn) Gửi thông báo lý do từ chối
+        }
+
+        // 3. Lưu lại và trả về kết quả
+        Field savedField = fieldRepository.save(field);
+        return fieldMapper.toFieldResponse(savedField);
+    }
 
     @Override
-    public FieldResponse getFieldById(Integer id) {
-        return null;
+    public FieldAndPriceResponse getFieldDetailWithPrices(Integer id) {
+// 1. Tìm thông tin sân
+        Field field = fieldRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.FIELD_NOT_FOUND));
+
+        // 2. Map thông tin sân sang DTO
+        FieldResponse fieldResponse = fieldMapper.toFieldResponse(field);
+
+        // BỎ 2 DÒNG NÀY ĐI VÌ BÊN SERVICE KIA ĐÃ TỰ TÍNH RỒI NHÉ SẾP
+        // LocalDate today = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+
+        // 3. Gọi thẳng Service giá (Nó chỉ cần ID sân là tự biết hôm nay giá bao nhiêu)
+        List<FieldPriceResponse> priceResponses = fieldPriceService.getPricesByDate(id);
+
+        // 4. Gói tất cả vào Response tổng và trả về
+        return FieldAndPriceResponse.builder()
+                .field_info(fieldResponse)
+                .prices(priceResponses)
+                .build();
     }
+
 
     @Override
     public FieldResponse updateField(Integer id, Integer ownerId, FieldCreateRequest request) {

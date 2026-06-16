@@ -65,9 +65,11 @@
             </div>
 
             <div class="venue-grid">
-                <div v-for="venue in featuredVenues" :key="venue.id" class="venue-card">
+                <div v-for="venue in venues" :key="venue.id" class="venue-card">
                     <div class="venue-image-box">
-                        <img class="venue-image" :src="venue.image" :alt="venue.name" />
+                        <img class="venue-image"
+                            :src="venue.image"
+                            :alt="venue.name" />
 
                         <div class="status-badge available">
                             CÒN TRỐNG
@@ -86,22 +88,23 @@
 
                         <p class="location">
                             <span class="material-symbols-outlined">location_on</span>
-                            {{ venue.location }}
+                            {{ venue.address }}
                         </p>
 
                         <div class="venue-info-row">
                             <div>
                                 <span class="material-symbols-outlined">stadium</span>
-                                <span>{{ venue.sport }}</span>
+                                <span>{{ venue.field_type_name }}</span>
                             </div>
 
                             <div>
                                 <span class="material-symbols-outlined">schedule</span>
-                                <span>{{ venue.time }}</span>
+                                <span>{{ $formatTime(venue.open_time) }} - {{ $formatTime(venue.close_time) }}</span>
                             </div>
                         </div>
-
-                        <button class="detail-button">Xem chi tiết</button>
+                        <router-link  :to="`/client/xem-chi-tiet/${venue.id}`">
+                            <button class="detail-button">Xem chi tiết</button>
+                        </router-link>
                     </div>
                 </div>
             </div>
@@ -110,149 +113,43 @@
 </template>
 
 <script>
+import axios from "axios";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default {
     name: "TrangChuClient",
 
     data() {
         return {
-            venues: [
-                {
-                    id: 1,
-                    name: "Sân bóng đá Đại học Y",
-                    location: "1 Tôn Thất Tùng, Đống Đa, Hà Nội",
-                    sport: "Bóng đá",
-                    time: "06:00 - 23:00",
-                    image:
-                        "https://lh3.googleusercontent.com/aida-public/AB6AXuANOKmqYm270OK_PCslBdJvj-0kWoHtISkuBVDtYHGJMbORW6KRmz2vT29m4DodR7RzIfFPQC_GLnZyPtdVg3rvi5umRlIaM6EXXruAI2yTOYX-WFVlmg9wfRTxWjMV9rZ6gekf-yhZozqeDY8U12NsbTSDpN4tzG-eGxMvzS3yWVbfv70eQ4L42MW7qRSzSiLJ6ZDnbdAPtMX6ey_3gyYh2HAoYag8Nwhqg5aOZ0c7Yr8-ngnVHMDlsrTmFjarOmEMfvWxPAYT5JE",
-                },
-                {
-                    id: 2,
-                    name: "Sân bóng rổ Thống Nhất",
-                    location: "138 Đào Duy Từ, Quận 10, TP.HCM",
-                    sport: "Bóng rổ",
-                    time: "08:00 - 21:00",
-                    image:
-                        "https://lh3.googleusercontent.com/aida-public/AB6AXuCc8RRNc6hpAiNAkeNWUKEiagb9K3DiWIRoOQgENf2cBRb14J5CSZtAhotDdjF3JdCHSp0uQ5ytzVFpwNM6e9Jk2GuZd8VDSQrE4yYouvVvlW_V72NvDcSBJzePhB_vpUPmQc236VCHUUxLVL2zgQF1pCztF2b367Su545PnND9Sfpuj37jalJRSdmcGJAim3UY8R6TyaQ-mhgDF4DxUsixvR7XAjWSwWIezFx4rIygSCfgKanb5HttomgYVZUbod-Kye-FEeO-3nA",
-                },
-                {
-                    id: 3,
-                    name: "Sân bóng chuyền Phú Thọ",
-                    location: "219 Lý Thường Kiệt, Quận 11, TP.HCM",
-                    sport: "Bóng chuyền",
-                    time: "07:00 - 22:00",
-                    image:
-                        "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1200",
-                },
-                {
-                    id: 4,
-                    name: "Sân cầu lông Hòa Xuân",
-                    location: "Cẩm Lệ, Đà Nẵng",
-                    sport: "Cầu lông",
-                    time: "05:30 - 22:30",
-                    image:
-                        "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?q=80&w=1200",
-                },
-                {
-                    id: 5,
-                    name: "Sân bóng đá Mỹ Đình",
-                    location: "Lê Đức Thọ, Nam Từ Liêm, Hà Nội",
-                    sport: "Bóng đá",
-                    time: "06:00 - 22:00",
-                    image:
-                        "https://images.unsplash.com/photo-1459865264687-595d652de67e?q=80&w=1200",
-                },
-                {
-                    id: 6,
-                    name: "Sân bóng rổ Cầu Giấy",
-                    location: "Cầu Giấy, Hà Nội",
-                    sport: "Bóng rổ",
-                    time: "08:00 - 22:00",
-                    image:
-                        "https://images.unsplash.com/photo-1505666287802-931dc83a7fe4?q=80&w=1200",
-                },
-                {
-                    id: 7,
-                    name: "Sân bóng chuyền Bình Thạnh",
-                    location: "Bình Thạnh, TP.HCM",
-                    sport: "Bóng chuyền",
-                    time: "08:00 - 22:00",
-                    image:
-                        "https://images.unsplash.com/photo-1592656094267-764a45160876?q=80&w=1200",
-                },
-                {
-                    id: 8,
-                    name: "Sân cầu lông Hải Châu",
-                    location: "Hải Châu, Đà Nẵng",
-                    sport: "Cầu lông",
-                    time: "06:00 - 23:00",
-                    image:
-                        "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?q=80&w=1200",
-                },
-                {
-                    id: 9,
-                    name: "Sân bóng đá Lạch Tray",
-                    location: "Ngô Quyền, Hải Phòng",
-                    sport: "Bóng đá",
-                    time: "05:00 - 23:00",
-                    image:
-                        "https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1200",
-                },
-                {
-                    id: 10,
-                    name: "Sân bóng rổ Nguyễn Du",
-                    location: "116 Nguyễn Du, Quận 1, TP.HCM",
-                    sport: "Bóng rổ",
-                    time: "07:00 - 21:30",
-                    image:
-                        "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1200",
-                },
-                {
-                    id: 11,
-                    name: "Sân bóng chuyền Đống Đa",
-                    location: "Đống Đa, Hà Nội",
-                    sport: "Bóng chuyền",
-                    time: "06:00 - 21:00",
-                    image:
-                        "https://images.unsplash.com/photo-1609710228159-0fa9bd7c0827?q=80&w=1200",
-                },
-                {
-                    id: 12,
-                    name: "Sân cầu lông Tân Bình",
-                    location: "Tân Bình, TP.HCM",
-                    sport: "Cầu lông",
-                    time: "05:30 - 22:00",
-                    image:
-                        "https://images.unsplash.com/photo-1613918431703-aa50889e3be9?q=80&w=1200",
-                },
-                {
-                    id: 13,
-                    name: "Sân bóng đá Hòa Khánh",
-                    location: "Liên Chiểu, Đà Nẵng",
-                    sport: "Bóng đá",
-                    time: "05:00 - 22:30",
-                    image:
-                        "https://images.unsplash.com/photo-1518604666860-9ed391f76460?q=80&w=1200",
-                },
-                {
-                    id: 14,
-                    name: "Sân bóng rổ Thanh Xuân",
-                    location: "Thanh Xuân, Hà Nội",
-                    sport: "Bóng rổ",
-                    time: "08:00 - 22:00",
-                    image:
-                        "https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=1200",
-                },
-                {
-                    id: 15,
-                    name: "Sân cầu lông Lê Văn Tám",
-                    location: "Hai Bà Trưng, Hà Nội",
-                    sport: "Cầu lông",
-                    time: "06:00 - 21:30",
-                    image:
-                        "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?q=80&w=1200",
-                },
-            ],
+            venues: [],
+            
         };
+    },
+    mounted() {
+        this.loadFields();
+    },
+    methods: {
+        loadFields() {
+            axios
+                .get(`${API_BASE_URL}/api/fields/active`, {
+                    params: {
+                        // Gửi page lên backend
+                        page: 1,
+
+                        // Gửi size lên backend
+                        size: 4,
+                    },
+                })
+                .then((response) => {
+                    const pageData = response.data.data;
+                    // Danh sách sân
+                    this.venues = pageData.data;
+                })
+                .catch((error) => {
+                    console.error("Lỗi khi tải  sân:", error);
+                    alert("Không thể tải danh sách sân. Vui lòng thử lại sau.");
+                });
+        }
     },
 
     computed: {
